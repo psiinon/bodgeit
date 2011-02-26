@@ -1,0 +1,29 @@
+body {
+	color:#333333;
+	font-family:Verdana,Helvetica,Arial,sans-serif;
+	# font-size:62.5%;
+}
+
+table.border {
+	border-width: thin;
+	border-spacing: 1px;
+	border-style: outset;
+	border-color: grey;
+	border-collapse: collapse;
+}
+
+table.noborder {
+	border-width: 0px;
+	border-spacing: 0px;
+	border-style: outset;
+	border-color: grey;
+	border-collapse: collapse;
+}
+table.noborder th {
+	border-width: 0px;
+	padding: 0px;
+}
+table.noborder td {
+	border-width: 0px;
+	padding: 0px;
+}
