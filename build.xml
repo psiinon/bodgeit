@@ -1,0 +1,39 @@
+<project basedir="." default="compile">
+
+	<path id="java.classpath">
+		<fileset dir="root/WEB-INF/lib">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+	<!-- Compile all of the source code -->
+	<target name="compile">
+		<!-- Compile the java code -->
+		<javac target="1.5" destdir="build/WEB-INF/classes" srcdir="src" classpathref="java.classpath" />
+	</target>
+
+	<target name="build" depends="compile">
+		<copy toDir="build"><fileset dir="root" includes="**/*"/></copy>
+
+		<delete file="build/bodgeit.war"/>
+		
+		<war destfile="build/bodgeit.war" webxml="root/WEB-INF/web.xml">
+			<fileset dir="build"/>
+		</war>
+	</target>
+
+	<target name="deploy" depends="build">
+		<delete dir="/opt/tomcat/webapps/bodgeit"/>
+		<copy file="build/bodgeit.war" tofile="/opt/tomcat/webapps/bodgeit.war"/>
+	</target>
+
+	<target name="deploy-jsps">
+		<copy toDir="/opt/tomcat/webapps/bodgeit">
+			<fileset dir="root">
+				<include name="*.jsp" />
+				<include name="*.css" />
+			</fileset>
+		</copy>
+	</target>
+	
+</project>
