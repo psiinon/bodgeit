@@ -48,6 +48,15 @@ if (request.getMethod().equals("POST") && username != null) {
 			session.setAttribute("username", rs.getString("name"));
 			session.setAttribute("userid", userid);
 			session.setAttribute("usertype", rs.getString("type"));
+			
+			// Update the scores
+			if ("test@thebodgeitstore.com".equals(username)) {
+				stmt.execute("UPDATE Score SET status = 1 WHERE task = 'LOGIN_TEST'");
+			} else if ("user1@thebodgeitstore.com".equals(username)) {
+				stmt.execute("UPDATE Score SET status = 1 WHERE task = 'LOGIN_USER1'");
+			} else if ("admin@thebodgeitstore.com".equals(username)) {
+				stmt.execute("UPDATE Score SET status = 1 WHERE task = 'LOGIN_ADMIN'");
+			} 
 
 			Cookie[] cookies = request.getCookies();
 			String basketId = null;

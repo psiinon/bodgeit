@@ -32,6 +32,7 @@
 			<fileset dir="root">
 				<include name="*.jsp" />
 				<include name="*.css" />
+				<include name="**/*.png" />
 			</fileset>
 		</copy>
 	</target>

@@ -95,7 +95,7 @@ function decQuantity () {
 				out.println("<td>" + product + "</td>");
 				out.println("<td><a href=\"product.jsp?typeid=" + rs.getInt("typeid") + "\">" + rs.getString("type") + "</a></td>");
 				out.println("<td align=\"right\">" + nf.format(price) + "</td>");
-				out.println("<td align=\"center\">&nbsp;<a href=\"#\" onclick=\"decQuantity();\">-</a>&nbsp;<input id=\"quantity\" name=\"quantity\" value=\"1\" maxlength=\"2\" size = \"2\" style=\"text-align: right\" READONLY />&nbsp;<a href=\"#\" onclick=\"incQuantity();\">+</a>&nbsp;");
+				out.println("<td align=\"center\">&nbsp;<a href=\"#\" onclick=\"decQuantity();\"><img src=\"images/130.png\" alt=\"Decrease quantity in basket\" border=\"0\"></a>&nbsp;<input id=\"quantity\" name=\"quantity\" value=\"1\" maxlength=\"2\" size = \"2\" style=\"text-align: right\" READONLY />&nbsp;<a href=\"#\" onclick=\"incQuantity();\"><img src=\"images/129.png\" alt=\"Increase quantity in basket\" border=\"0\"></a>&nbsp;");
 				out.println("<td align=\"center\"><input type=\"submit\" value=\"Add to Basket\"/></td>");
 				out.println("</tr>");
 				out.println("</table></center>");
