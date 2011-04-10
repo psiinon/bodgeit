@@ -36,6 +36,10 @@
 	PreparedStatement stmt = null;
 	ResultSet rs = null;
 	try {
+		if (session == null || ! "admin@thebodgeitstore.com".equals(session.getAttribute("username"))) {
+			conn.createStatement().execute("UPDATE Score SET status = 1 WHERE task = 'HIDDEN_ADMIN'");
+		} 
+		
 		stmt = conn.prepareStatement("SELECT * FROM Users");
 		rs = stmt.executeQuery();
 		out.println("<br/><center><table class=\"border\" width=\"80%\">");
@@ -47,7 +51,6 @@
 			out.println("</tr>");
 		}
 		out.println("</table></center><br/>");
-		
 		
 		stmt = conn.prepareStatement("SELECT * FROM Baskets");
 		rs = stmt.executeQuery();
