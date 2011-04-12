@@ -74,6 +74,29 @@ function decQuantity (prodid) {
 	
 	if (basketId != null) {
 		// Dont need to do anything else
+			
+		// Well, apart from checking to see if they've accessed someone elses basket ;)
+		Statement stmt = conn.createStatement();
+		try {
+			ResultSet rs = stmt.executeQuery("SELECT * FROM Baskets WHERE basketid = " + basketId);
+			rs.next();
+			String bUserId = "" + rs.getInt("userid");
+			if ((userid == null && ! bUserId.equals("0")) || (userid != null && userid.equals(bUserId))) {
+				conn.createStatement().execute("UPDATE Score SET status = 1 WHERE task = 'OTHER_BASKET'");
+			}
+
+		} catch (Exception e) {
+			if ("true".equals(request.getParameter("debug"))) {
+				conn.createStatement().execute("UPDATE Score SET status = 1 WHERE task = 'HIDDEN_DEBUG'");
+				out.println("DEBUG System error: " + e + "<br/><br/>");
+			} else {
+				out.println("System error.");
+			}
+
+		} finally {
+			stmt.close();
+		}
+
 	} else if (userid == null) {
 		// Not logged in, and no basket, so create one
 		Statement stmt = conn.createStatement();
@@ -88,6 +111,7 @@ function decQuantity (prodid) {
 
 		} catch (Exception e) {
 			if ("true".equals(request.getParameter("debug"))) {
+				conn.createStatement().execute("UPDATE Score SET status = 1 WHERE task = 'HIDDEN_DEBUG'");
 				out.println("DEBUG System error: " + e + "<br/><br/>");
 			} else {
 				out.println("System error.");
@@ -107,7 +131,7 @@ function decQuantity (prodid) {
 				basketId = "" + bId;
 			} else {
 				// Need to create one
-			Timestamp ts = new Timestamp((new java.util.Date()).getTime());
+				Timestamp ts = new Timestamp((new java.util.Date()).getTime());
 				stmt.execute("INSERT INTO Baskets (created, userid) VALUES ('" + ts + "', " + userid + ")");
 				rs = stmt.executeQuery("SELECT * FROM Baskets WHERE (userid = " + userid + ")");
 				rs.next();
@@ -117,6 +141,7 @@ function decQuantity (prodid) {
 			
 		} catch (SQLException e) {
 			if ("true".equals(request.getParameter("debug"))) {
+				conn.createStatement().execute("UPDATE Score SET status = 1 WHERE task = 'HIDDEN_DEBUG'");
 				out.println("DEBUG System error: " + e + "<br/><br/>");
 			} else {
 				out.println("System error.");
@@ -125,6 +150,7 @@ function decQuantity (prodid) {
 
 		} catch (Exception e) {
 			if ("true".equals(request.getParameter("debug"))) {
+				conn.createStatement().execute("UPDATE Score SET status = 1 WHERE task = 'HIDDEN_DEBUG'");
 				out.println("DEBUG System error: " + e + "<br/><br/>");
 			} else {
 				out.println("System error.");
@@ -137,6 +163,7 @@ function decQuantity (prodid) {
 		
 	}
 	if ("true".equals(request.getParameter("debug"))) {
+		conn.createStatement().execute("UPDATE Score SET status = 1 WHERE task = 'HIDDEN_DEBUG'");
 		out.println("DEBUG basketid = " + basketId + "<br/><br/>");
 	}
 	
@@ -161,6 +188,10 @@ function decQuantity (prodid) {
 				stmt.close();
 				stmt = conn.prepareStatement("UPDATE BasketContents SET quantity = " + Integer.parseInt(quantity) + 
 						" WHERE basketid=" + basketId + " AND productid = " + productId);
+				stmt.execute();
+				if (Integer.parseInt(quantity) < 0) {
+					conn.createStatement().execute("UPDATE Score SET status = 1 WHERE task = 'NEG_BASKET'");
+				}
 			} else {
 				rs.close();
 				stmt.close();
@@ -173,11 +204,15 @@ function decQuantity (prodid) {
 					stmt = conn.prepareStatement("INSERT INTO BasketContents (basketid, productid, quantity, pricetopay) VALUES (" +
 							basketId + ", " + productId + ", " + Integer.parseInt(quantity) + ", " + price + ")");
 					stmt.execute();
+					if (Integer.parseInt(quantity) < 0) {
+						conn.createStatement().execute("UPDATE Score SET status = 1 WHERE task = 'NEG_BASKET'");
+					}
 				}
 			}
 			out.println("Your basket had been updated.<br/>");
 		} catch (SQLException e) {
 			if ("true".equals(request.getParameter("debug"))) {
+				conn.createStatement().execute("UPDATE Score SET status = 1 WHERE task = 'HIDDEN_DEBUG'");
 				out.println("DEBUG System error: " + e + "<br/><br/>");
 			} else {
 				out.println("System error.");
@@ -199,7 +234,6 @@ function decQuantity (prodid) {
 			String key = (String) entry.getKey();
 			String value = ((String[]) entry.getValue())[0];
 			if (key.startsWith("quantity_")) {
-				// out.println("TEST " + key + "=" + value + ", id=" + prodId + "<br/>");
 				String prodId = key.substring(9);
 				if (value.equals("0")) {
 					stmt = conn.prepareStatement("DELETE FROM BasketContents WHERE basketid=" + basketId +
@@ -210,7 +244,9 @@ function decQuantity (prodid) {
 					stmt = conn.prepareStatement("UPDATE BasketContents SET quantity = " + Integer.parseInt(value) + " WHERE basketid=" + basketId +
 							" AND productid = " + prodId);
 					stmt.execute();
-					
+					if (Integer.parseInt(value) < 0) {
+						conn.createStatement().execute("UPDATE Score SET status = 1 WHERE task = 'NEG_BASKET'");
+					}
 				}
 			}
 		}
@@ -253,6 +289,7 @@ function decQuantity (prodid) {
 	
 	} catch (SQLException e) {
 		if ("true".equals(request.getParameter("debug"))) {
+			stmt.execute("UPDATE Score SET status = 1 WHERE task = 'HIDDEN_DEBUG'");
 			out.println("DEBUG System error: " + e + "<br/><br/>");
 		} else {
 			out.println("System error.");

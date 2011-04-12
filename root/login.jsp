@@ -54,7 +54,9 @@ if (request.getMethod().equals("POST") && username != null) {
 				stmt.execute("UPDATE Score SET status = 1 WHERE task = 'LOGIN_TEST'");
 			} else if ("user1@thebodgeitstore.com".equals(username)) {
 				stmt.execute("UPDATE Score SET status = 1 WHERE task = 'LOGIN_USER1'");
-			} else if ("admin@thebodgeitstore.com".equals(username)) {
+			} else if (username.startsWith("user1@thebodgeitstore.com'")) {
+				stmt.execute("UPDATE Score SET status = 1 WHERE task = 'LOGIN_USER1'");
+			} else if (username.startsWith("admin@thebodgeitstore.com'")) {
 				stmt.execute("UPDATE Score SET status = 1 WHERE task = 'LOGIN_ADMIN'");
 			} 
 
@@ -85,6 +87,7 @@ if (request.getMethod().equals("POST") && username != null) {
 		}
 	} catch (Exception e) {
 		if ("true".equals(request.getParameter("debug"))) {
+			stmt.execute("UPDATE Score SET status = 1 WHERE task = 'HIDDEN_DEBUG'");
 			out.println("DEBUG System error: " + e + "<br/><br/>");
 		} else {
 			out.println("System error.");

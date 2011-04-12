@@ -50,7 +50,7 @@ Here are at least some of the vulnerabilities that you can try and exploit:<br/>
 				} else if (status == 0) {
 					out.println("<img src=\"images/151.png\" alt=\"Not completed\" title=\"Not completed\" border=\"0\">");
 				} else {
-					out.println("<img src=\"images/154.png\" alt=\"Not implemented yet :(\" title=\"Not implemented yet :(\" border=\"0\">");
+					out.println("<img src=\"images/154.png\" alt=\"Not implemented/tested yet :(\" title=\"Not implemented/tested yet :(\" border=\"0\">");
 				}
 				out.println("</td>");
 				out.println("</tr>");

@@ -74,6 +74,7 @@ if (usertype != null && usertype.endsWith("ADMIN")) {
 		out.println("</table></center><br/>");
 	} catch (Exception e) {
 		if ("true".equals(request.getParameter("debug"))) {
+			conn.createStatement().execute("UPDATE Score SET status = 1 WHERE task = 'HIDDEN_DEBUG'");
 			out.println("DEBUG System error: " + e + "<br/><br/>");
 		} else {
 			out.println("System error.");

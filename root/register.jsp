@@ -61,7 +61,12 @@ if (request.getMethod().equals("POST") && username != null) {
 			session.setAttribute("usertype", "USER");
 			session.setAttribute("userid", userid);
 
-			registered = true;;
+			
+			if (username.replaceAll("\\s", "").toLowerCase().indexOf("<script>alert(\"xss\")</script>") >= 0) {
+				conn.createStatement().execute("UPDATE Score SET status = 1 WHERE task = 'XSS_USER'");
+			}
+
+			registered = true;
 
 			// Update basket
 			Cookie[] cookies = request.getCookies();
@@ -76,6 +81,7 @@ if (request.getMethod().equals("POST") && username != null) {
 			}
 			if (basketId != null) {
 				debug +=  " userId = " + userid + " basketId = " + basketId;
+				// TODO breaks basket scoring :(
 				stmt.execute("UPDATE Users SET currentbasketid = " + basketId + " WHERE userid = " + userid);
 				stmt.execute("UPDATE Baskets SET userid = " + userid + " WHERE basketid = " + basketId);
 				response.addCookie(new Cookie("b_id", ""));
@@ -86,6 +92,7 @@ if (request.getMethod().equals("POST") && username != null) {
 				result = "A user with this name already exists.";
 			} else {
 				if ("true".equals(request.getParameter("debug"))) {
+					conn.createStatement().execute("UPDATE Score SET status = 1 WHERE task = 'HIDDEN_DEBUG'");
 					out.println("DEBUG System error: " + e + "<br/><br/>");
 				} else {
 					out.println("System error.");
@@ -93,6 +100,7 @@ if (request.getMethod().equals("POST") && username != null) {
 			}
 		} catch (Exception e) {
 			if ("true".equals(request.getParameter("debug"))) {
+				conn.createStatement().execute("UPDATE Score SET status = 1 WHERE task = 'HIDDEN_DEBUG'");
 				out.println("DEBUG System error: " + e + "<br/><br/>");
 			} else {
 				out.println("System error.");
@@ -110,8 +118,10 @@ if (request.getMethod().equals("POST") && username != null) {
 <h3>Register</h3>
 <%
 if ("true".equals(request.getParameter("debug"))) {
+	conn.createStatement().execute("UPDATE Score SET status = 1 WHERE task = 'HIDDEN_DEBUG'");
 	out.println("DEBUG: " + debug + "<br/><br/>");
 }
+
 if (registered) {
 	out.println("<br/>You have successfully registered with The BodgeIt Store.");
 %>
