@@ -119,6 +119,7 @@ function decQuantity () {
 
 	} catch (SQLException e) {
 		if ("true".equals(request.getParameter("debug"))) {
+			conn.createStatement().execute("UPDATE Score SET status = 1 WHERE task = 'HIDDEN_DEBUG'");
 			out.println("DEBUG System error: " + e + "<br/><br/>");
 		} else {
 			out.println("System error.");

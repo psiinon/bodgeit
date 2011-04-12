@@ -184,10 +184,10 @@
 				c.prepareStatement("INSERT INTO Score (task, description, status) VALUES ('LOGIN_USER1', 'Login as user1@thebodgeitstore.com', 0)").execute();
 				c.prepareStatement("INSERT INTO Score (task, description, status) VALUES ('LOGIN_ADMIN', 'Login as admin@thebodgeitstore.com', 0)").execute();
 				c.prepareStatement("INSERT INTO Score (task, description, status) VALUES ('HIDDEN_ADMIN', 'Find hidden content as a non admin user', 0)").execute();
-				c.prepareStatement("INSERT INTO Score (task, description, status) VALUES ('HIDDEN_DEBUG', 'Find diagnostic data', -1)").execute();
-				c.prepareStatement("INSERT INTO Score (task, description, status) VALUES ('XSS_PRODUCT', 'Display a popup using: &lt;script&gt;alert(''XSS'')&lt;/script&gt;', -1)").execute();
+				c.prepareStatement("INSERT INTO Score (task, description, status) VALUES ('HIDDEN_DEBUG', 'Find diagnostic data', 0)").execute();
+				c.prepareStatement("INSERT INTO Score (task, description, status) VALUES ('XSS_USER', 'Display a popup using: &lt;script&gt;alert(\"XSS\")&lt;/script&gt;', 0)").execute();
 				c.prepareStatement("INSERT INTO Score (task, description, status) VALUES ('OTHER_BASKET', 'Access someone elses basket', -1)").execute();
-				c.prepareStatement("INSERT INTO Score (task, description, status) VALUES ('NEG_BASKET', 'Get the store to pay you money', -1)").execute();
+				c.prepareStatement("INSERT INTO Score (task, description, status) VALUES ('NEG_BASKET', 'Get the store to owe you money', 0)").execute();
 			}
 			rs.close();
 		} catch (SQLException e) {
