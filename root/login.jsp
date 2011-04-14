@@ -50,13 +50,11 @@ if (request.getMethod().equals("POST") && username != null) {
 			session.setAttribute("usertype", rs.getString("type"));
 			
 			// Update the scores
-			if ("test@thebodgeitstore.com".equals(username)) {
+			if (userid.equals("3")) {
 				stmt.execute("UPDATE Score SET status = 1 WHERE task = 'LOGIN_TEST'");
-			} else if ("user1@thebodgeitstore.com".equals(username)) {
+			} else if (userid.equals("1")) {
 				stmt.execute("UPDATE Score SET status = 1 WHERE task = 'LOGIN_USER1'");
-			} else if (username.startsWith("user1@thebodgeitstore.com'")) {
-				stmt.execute("UPDATE Score SET status = 1 WHERE task = 'LOGIN_USER1'");
-			} else if (username.startsWith("admin@thebodgeitstore.com'")) {
+			} else if (userid.equals("2")) {
 				stmt.execute("UPDATE Score SET status = 1 WHERE task = 'LOGIN_ADMIN'");
 			} 
 
