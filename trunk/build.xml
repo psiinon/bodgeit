@@ -1,9 +1,19 @@
 <project basedir="." default="compile">
 
+	<!-- This file contains all of the environment specific configuration, change it for your setup -->
+    <property file="local.properties"/>
+
 	<path id="java.classpath">
 		<fileset dir="root/WEB-INF/lib">
 			<include name="*.jar" />
 		</fileset>
+		<fileset dir="lib">
+			<include name="*.jar" />
+		</fileset>
+		<fileset dir="build/WEB-INF/classes">
+			<include name="*.class" />
+		</fileset>
+		<pathelement location="build/WEB-INF/classes"/>
 	</path>
 
 	<!-- Compile all of the source code -->
@@ -36,5 +46,102 @@
 			</fileset>
 		</copy>
 	</target>
-	
+
+	<target name="test">
+        <!-- Run the JUnit tests -->
+        <junit printsummary="yes">
+            <classpath>
+        		<fileset dir="root/WEB-INF/lib">
+        			<include name="*.jar" />
+        		</fileset>
+        		<fileset dir="lib">
+        			<include name="*.jar" />
+        		</fileset>
+        		<fileset dir="lib">
+        			<include name="*.jar" />
+        		</fileset>
+        		<pathelement location="build/WEB-INF/classes"/>
+            </classpath>
+            <formatter type="plain"/>
+            <formatter type="xml"/>
+            <batchtest fork="yes" todir="build/tests">
+                <fileset dir="src">
+                    <include name="**/*Test.java"/>
+                </fileset>
+            </batchtest>
+		</junit>
+	</target>
+
+	<target name="zap-test">
+		<!-- Your servlet engine must be running when you start this test -->
+
+		<!-- Start ZAP with UI -->
+		<!--
+		<ant antfile="zap-build.xml" target="startZap" inheritAll="false"/>
+		-->
+
+		<!-- OR Start ZAP in background -->
+		<ant antfile="zap-build.xml" target="startZapDaemon" inheritAll="false"/>
+		
+		<!-- Run the standard tests -->
+        <junit printsummary="yes" fork="yes">
+        	<sysproperty key="zap.proxy" value="${zap.addr}:${zap.port}"/>
+        	<sysproperty key="zap.targetApp" value="${zap.targetApp}"/>
+            <classpath>
+        		<fileset dir="root/WEB-INF/lib">
+        			<include name="*.jar" />
+        		</fileset>
+        		<fileset dir="lib">
+        			<include name="*.jar" />
+        		</fileset>
+        		<fileset dir="build/WEB-INF/classes">
+        			<include name="*.class" />
+        		</fileset>
+        		<pathelement location="build/WEB-INF/classes"/>
+            </classpath>
+            <formatter type="plain"/>
+            <formatter type="xml"/>
+            <batchtest fork="yes" todir="build/tests">
+                <fileset dir="src">
+                    <include name="**/FunctionalZAP.java"/>
+                </fileset>
+            </batchtest>
+		</junit>
+
+		<sleep seconds="5"/>
+
+		<!-- Spider the whole site -->
+		<ant antfile="zap-build.xml" target="spider" inheritAll="false"/>
+
+		<sleep seconds="5"/>
+
+		<!-- Active scan the whole site -->
+		<ant antfile="zap-build.xml" target="activescan" inheritAll="false"/>
+
+		<sleep seconds="3"/>
+
+		<!-- Save to a timestamped session file -->
+		<tstamp>
+			<format property="timestamp" pattern="yyyy-MM-dd-HH-mm-ss"/>
+		</tstamp>
+		<ant antfile="zap-build.xml" target="savesession" inheritAll="false">
+			<!-- Override the session name -->
+			<property name="zap.session" value="bodgeit-${timestamp}"/>
+		</ant>
+
+		<!-- Give the passive scanner thread a chance to catch up -->
+		<sleep seconds="5"/>
+		
+		<!-- Check the alerts logged -->
+		<ant antfile="zap-build.xml" target="alertcheck" inheritAll="false"/>
+		
+		<!--
+		Note that if the above test fails ZAP will not be stopped, so you will need to call the stopZap target directly.
+		-->
+
+		<!-- Stop ZAP -->
+		<ant antfile="zap-build.xml" target="stopZap" inheritAll="false"/>
+
+	</target>
+
 </project>
