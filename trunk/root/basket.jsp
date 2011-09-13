@@ -250,7 +250,7 @@ function decQuantity (prodid) {
 				}
 			}
 		}
-		out.println("Your basket had been updated.<br/><br/>");
+		out.println("<p style=\"color:green\">Your basket had been updated.</p><br/>");
 	}
 	
 	// Display basket

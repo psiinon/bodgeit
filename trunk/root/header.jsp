@@ -25,7 +25,7 @@
 <td align="center" width="30%" style="text-align: right" >
 <%
 	if (username != null) {
-		out.println("User: " + username);
+		out.println("User: <a href=\"password.jsp\">" + username + "</a>");
 	} else {
 		out.println("Guest user");
 	}

@@ -45,7 +45,7 @@ if (request.getMethod().equals("POST") && comments != null) {
 		stmt.setString(2, comments);
 		stmt.execute();
 
-		out.println("Thank you for your feedback.");
+		out.println("<br/><p style=\"color:green\">Thank you for your feedback.</p><br/>");
 
 		return;
 
