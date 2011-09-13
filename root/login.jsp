@@ -106,7 +106,7 @@ if ("true".equals(request.getParameter("debug"))) {
 // Display the form
 if (request.getMethod().equals("POST") && username != null) {
 	if (loggedIn) {
-		out.println("You have logged in successfully: " + username);
+		out.println("<br/>You have logged in successfully: " + username);
 		return;
 		
 	} else {
