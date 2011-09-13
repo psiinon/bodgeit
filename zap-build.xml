@@ -1,0 +1,86 @@
+<project basedir=".">
+
+	<!-- This file contains all of the environment specific configuration, change it for your setup -->
+    <property file="local.properties"/>
+
+	<!--
+	In Eclipse you can get these taskdefs to work by:
+		Downloading the latest ZAP client API from https://code.google.com/p/zaproxy/downloads/list
+			It will be named like ZAP_Client_API_<version>.zip
+	 	Extracting all of the jars from it and adding them to the 'Ant Home Entries'.
+			To get there: Windows / Preferences / Ant / Runtime
+
+	TODO: Work out how this should be done properly, clean up and document ;)
+	-->
+
+	<taskdef name="accessUrlTask" classname="org.zaproxy.clientapi.ant.AccessUrlTask"/>
+	<taskdef name="activeScanUrlTask" classname="org.zaproxy.clientapi.ant.ActiveScanUrlTask"/>
+	<taskdef name="alertCheckTask" classname="org.zaproxy.clientapi.ant.AlertCheckTask"/>
+	<taskdef name="loadSessionTask" classname="org.zaproxy.clientapi.ant.LoadSessionTask"/>
+	<taskdef name="newSessionTask" classname="org.zaproxy.clientapi.ant.NewSessionTask"/>
+	<taskdef name="saveSessionTask" classname="org.zaproxy.clientapi.ant.SaveSessionTask"/>
+	<taskdef name="spiderUrlTask" classname="org.zaproxy.clientapi.ant.SpiderUrlTask"/>
+	<taskdef name="stopZapTask" classname="org.zaproxy.clientapi.ant.StopZapTask"/>
+	<taskdef name="alert" classname="org.zaproxy.clientapi.ant.AlertTask"/>
+
+	<!--
+	Calling tasks can override properties, eg using
+	
+		<ant antfile="zap-build.xml" target="startZapDaemon" inheritAll="false">
+			<property name="zap.dir" value="/opt/owasp/zap"/>
+		</ant>
+	-->
+
+	<target name="startZap">
+		<java classname="org.zaproxy.zap.ZAP" fork="true" spawn="true" dir="${zap.dir}">
+			<classpath>
+				<pathelement location="${zap.dir}/zap.jar"/>
+			</classpath>
+		</java>
+		<!-- Give ZAP a chance to start -->
+		<sleep seconds="10"/>
+	</target>
+
+	<target name="startZapDaemon">
+		<java classname="org.zaproxy.zap.ZAP" fork="true" spawn="true" dir="${zap.dir}">
+			<arg value="-daemon"/>
+			<classpath>
+				<pathelement location="${zap.dir}/zap.jar"/>
+			</classpath>
+		</java>
+		<!-- Give ZAP a chance to start -->
+		<sleep seconds="10"/>
+	</target>
+
+	<target name="stopZap">
+	    <stopZapTask zapAddress="${zap.addr}" zapPort="${zap.port}" debug="true"/>
+	</target>
+
+	<target name="spider">
+	    <spiderUrlTask zapAddress="${zap.addr}" zapPort="${zap.port}" url="${zap.target}" debug="true"/>
+	</target>
+
+	<target name="activescan">
+	    <activeScanUrlTask zapAddress="${zap.addr}" zapPort="${zap.port}" url="${zap.target}" debug="true"/>
+	</target>
+	
+	<target name="savesession">
+	    <saveSessionTask zapAddress="${zap.addr}" zapPort="${zap.port}" name="${zap.session}" debug="true"/>
+	</target>
+
+	<target name="alertcheck">
+	    <alertCheckTask zapAddress="${zap.addr}" zapPort="${zap.port}" debug="true">
+	    	<!--
+	    		The alertCheckTask will fail if any alerts are reported..
+	    		ignoreAlert alerts are ignored if reported
+	    		requireAlerts will fail if not present
+	    		Missing elements match everything, so:
+			    	<ignoreAlert risk="Low" reliability="Warning"/>
+			    will ignore all alerts with a Low risk and Warning reliability
+			    The url, param and other fields are all regexs 
+	    	 -->
+	    	<ignoreAlert alert="Cookie set without HttpOnly flag" risk="Low" reliability="Warning"/>
+	    </alertCheckTask>
+	</target>
+	
+</project>
