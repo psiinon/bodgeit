@@ -1,3 +1,4 @@
+#labels Featured
 = Regression Tests =
 
 There are some basic Selenium regression tests that can be run using the Ant 'test' task in http://code.google.com/p/bodgeit/source/browse/trunk/build.xml
@@ -14,7 +15,7 @@ However using ZAP in this way means that you can include basic security tests in
 
 In order to run these you need to
   # Download and install Eclipse (if you havnt already)
-  # Checkout the BodgeIt Store as an Eclipse project (TODO: describe in more detail;)
+  # Checkout the Bodge It Store as an Eclipse project (TODO: describe in more detail;)
   # Download and install the [https://code.google.com/p/zaproxy/downloads/list Zed Attack Proxy]
   # Download the ZAP Client API (same directory as above), it will be named like ZAP_Client_API_`<version>`.zip
   # Extract all of the jars from it and add them to the 'Ant Home Entries'.
