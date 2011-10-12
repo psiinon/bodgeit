@@ -32,31 +32,51 @@
 <%
 String username = (String) session.getAttribute("username");
 String usertype = (String) session.getAttribute("usertype");
-
+String anticsrf = null;
 
 String comments = (String) request.getParameter("comments");
 
 if (request.getMethod().equals("POST") && comments != null) {
 
-	PreparedStatement stmt = conn.prepareStatement("INSERT INTO Comments (name, comment) VALUES (?, ?)");
-	ResultSet rs = null;
-	try {
-		stmt.setString(1, username);
-		stmt.setString(2, comments);
-		stmt.execute();
+	anticsrf = request.getParameter("anticsrf");
+	if (anticsrf != null && anticsrf.equals(request.getSession().getAttribute("anticsrf"))) {
 
-		out.println("<br/><p style=\"color:green\">Thank you for your feedback.</p><br/>");
+		// Strip double quotes, because that will make everything alright...
+		comments = comments.replace("\"", "");
 
-		return;
+		PreparedStatement stmt = conn.prepareStatement("INSERT INTO Comments (name, comment) VALUES (?, ?)");
+		ResultSet rs = null;
+		try {
+			stmt.setString(1, username);
+			stmt.setString(2, comments);
+			stmt.execute();
 
-	} catch (SQLException e) {
-		out.println("System error.<br/><br/>" + e);
-	} catch (Exception e) {
-		out.println("System error.<br/><br/>" + e);
-	} finally {
-		stmt.close();
+			if (username == null) {
+				username = "Guest user";
+			}
+
+			out.println("<br/><p style=\"color:green\">Thank you for your feedback:</p><br/>");
+			out.println("<br/><center><table border=\"1\" width=\"80%\" class=\"border\">");
+			out.println("<tr><td>" + comments + "</td></tr>");
+			out.println("</table></center><br/>");
+
+			return;
+
+		} catch (SQLException e) {
+			out.println("System error.<br/><br/>" + e);
+		} catch (Exception e) {
+			out.println("System error.<br/><br/>" + e);
+		} finally {
+			stmt.close();
+		}
+	} else {
+		out.println("<br/><p style=\"color:red\">There was a problem with your feedback, please try again.</p><br/>");
 	}
 }
+// Generate and store a new token
+anticsrf = "" + Math.random();
+request.getSession().setAttribute("anticsrf", anticsrf);
+
 
 if (usertype != null && usertype.endsWith("ADMIN")) {
 	// Display all of the messages
@@ -90,6 +110,7 @@ if (usertype != null && usertype.endsWith("ADMIN")) {
 Please send us your feedback: <br/><br/>
 <form method="POST">
 	<input type="hidden" id="user" name="<%=username%>" value=""/>
+	<input type="hidden" id="anticsrf" name="anticsrf" value="<%=anticsrf%>"></input>
 	<center>
 	<table>
 	<tr>
