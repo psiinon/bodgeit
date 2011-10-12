@@ -33,12 +33,12 @@
 	</target>
 
 	<target name="deploy" depends="build">
-		<delete dir="/opt/tomcat/webapps/bodgeit"/>
-		<copy file="build/bodgeit.war" tofile="/opt/tomcat/webapps/bodgeit.war"/>
+		<delete dir="${deploy.dir}/bodgeit"/>
+		<copy file="build/bodgeit.war" tofile="${deploy.dir}/bodgeit.war"/>
 	</target>
 
 	<target name="deploy-jsps">
-		<copy toDir="/opt/tomcat/webapps/bodgeit">
+		<copy toDir="${deploy.dir}/bodgeit">
 			<fileset dir="root">
 				<include name="*.jsp" />
 				<include name="*.css" />
