@@ -41,7 +41,10 @@ if (request.getMethod().equals("POST") && comments != null) {
 	anticsrf = request.getParameter("anticsrf");
 	if (anticsrf != null && anticsrf.equals(request.getSession().getAttribute("anticsrf"))) {
 
-		// Strip double quotes, because that will make everything alright...
+		// Strip script tags, because that will make everything alright...
+		comments = comments.replace("<script>", "");
+		comments = comments.replace("</script>", "");
+		// And double quotes, just to make sure
 		comments = comments.replace("\"", "");
 
 		PreparedStatement stmt = conn.prepareStatement("INSERT INTO Comments (name, comment) VALUES (?, ?)");
@@ -129,4 +132,5 @@ Please send us your feedback: <br/><br/>
 %>
 
 <jsp:include page="/footer.jsp"/>
+
 
