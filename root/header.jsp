@@ -7,6 +7,7 @@
 <head>
 <title>The BodgeIt Store</title>
 <link href="style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="./js/util.js"></script>
 </head>
 <body>
 <%
@@ -16,7 +17,7 @@
 <center>
 <table width="80%" class="border">
 <tr BGCOLOR=#C3D9FF>
-<td align="center" colspan="5">
+<td align="center" colspan="6">
 <H1>The BodgeIt Store</H1>
 <table width="100%" class=\"noborder\">
 <tr BGCOLOR=#C3D9FF>
@@ -70,10 +71,10 @@
 <%
 	}
 %>
-
+<td align="center" width="20%" BGCOLOR=#EEEEEE><a href="search.jsp">Search</a></td>
 </tr>
 <tr>
-<td align="center" colspan="5">
+<td align="center" colspan="6">
 <table width="100%" class="border">
 <tr>
 <td align="left" valign="top" width="25%">
