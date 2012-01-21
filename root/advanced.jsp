@@ -115,7 +115,6 @@ if (request.getMethod().equals("POST") && query != null){
                              "WHERE PRODUCT LIKE '%{PRODUCT}%' AND " + 
                              "DESC LIKE '%{DESCRIPTION}%' AND PRICE LIKE '%{PRICE}%' " +
                              "AND TYPE LIKE '%{TYPE}%'";
-  out.println("abc");
                
                 for(int x = 0; x < params.length; x++){
                     String[] parm = params[x].split(":");
@@ -125,7 +124,6 @@ if (request.getMethod().equals("POST") && query != null){
                     }
                     
                 }
-  out.println("def<br>");
                 sql = sql.replaceAll("%\\{[^\\}]+\\}", "");
                 if ("true".equals(request.getParameter("debug")))
                     out.println(sql);
@@ -177,11 +175,13 @@ if (request.getMethod().equals("POST") && query != null){
 } else {
 %>
 <form id="advanced" name="advanced" method="POST" onsubmit="return validateForm(this);false;">
-    Product:<input id='product' type='text' name='product' /><br/><br/>
-    Description:<input id='desc' type='text' name='description' /><br/><br/>
-    Type:<input id='type' type='text' name='type' /><br/><br/>
-    Price:<input id='price' type='text' name='price' /><br/><br/>
-    <input type='submit'/>
+<table>
+<tr><td>Product:</td><td><input id='product' type='text' name='product' /></td></td>
+<tr><td>Description:</td><td><input id='desc' type='text' name='description' /></td></td>
+<tr><td>Type:</td><td><input id='type' type='text' name='type' /></td></td>
+<tr><td>Price:</td><td><input id='price' type='text' name='price' /></td></td>
+<tr><td></td><td><input type='submit' value='Search'/></td></td>
+</table>
 </form>
 <form id="query" name="advanced" method="POST">
     <input id='q' type="hidden" name="q" value="" />

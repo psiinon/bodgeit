@@ -36,22 +36,22 @@
 </td>
 </tr>
 <tr>
-<td align="center" width="20%" BGCOLOR=#EEEEEE><a href="home.jsp">Home</a></td>
-<td align="center" width="20%" BGCOLOR=#EEEEEE><a href="about.jsp">About Us</a></td>
+<td align="center" width="16%" BGCOLOR=#EEEEEE><a href="home.jsp">Home</a></td>
+<td align="center" width="16%" BGCOLOR=#EEEEEE><a href="about.jsp">About Us</a></td>
 <%
 	if (usertype != null && usertype.equals("ADMIN")) {
 %>
-<td align="center" width="20%" BGCOLOR=#EEEEEE><a href="contact.jsp">Comments</a></td>
-<td align="center" width="20%" BGCOLOR=#EEEEEE><a href="admin.jsp">Admin</a></td>
+<td align="center" width="16%" BGCOLOR=#EEEEEE><a href="contact.jsp">Comments</a></td>
+<td align="center" width="16%" BGCOLOR=#EEEEEE><a href="admin.jsp">Admin</a></td>
 <%
 	} else {
 %>
-<td align="center" width="20%" BGCOLOR=#EEEEEE><a href="contact.jsp">Contact Us</a></td>
-<!-- td align="center" width="20%"><a href="admin.jsp">Admin</a></td-->
+<td align="center" width="16%" BGCOLOR=#EEEEEE><a href="contact.jsp">Contact Us</a></td>
+<!-- td align="center" width="16%"><a href="admin.jsp">Admin</a></td-->
 <%
 	}
 %>
-<td align="center" width="20%" BGCOLOR=#EEEEEE>
+<td align="center" width="16%" BGCOLOR=#EEEEEE>
 <%
 	if (usertype == null) {
 %>
@@ -67,11 +67,11 @@
 <%
 	if (usertype == null || ! usertype.equals("ADMIN")) {
 %>
-<td align="center" width="20%" BGCOLOR=#EEEEEE><a href="basket.jsp">Your Basket</a></td>
+<td align="center" width="16%" BGCOLOR=#EEEEEE><a href="basket.jsp">Your Basket</a></td>
 <%
 	}
 %>
-<td align="center" width="20%" BGCOLOR=#EEEEEE><a href="search.jsp">Search</a></td>
+<td align="center" width="16%" BGCOLOR=#EEEEEE><a href="search.jsp">Search</a></td>
 </tr>
 <tr>
 <td align="center" colspan="6">
