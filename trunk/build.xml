@@ -76,12 +76,16 @@
 		<!-- Your servlet engine must be running when you start this test -->
 
 		<!-- Start ZAP with UI -->
-		<!--
 		<ant antfile="zap-build.xml" target="startZap" inheritAll="false"/>
-		-->
 
 		<!-- OR Start ZAP in background -->
+		<!-- 
+			IMPORTANT - there is a bug in ZAP 1.4.0 which means ZAP running in daemon mode will exit 
+			when you save the session 
+		-->
+		<!--
 		<ant antfile="zap-build.xml" target="startZapDaemon" inheritAll="false"/>
+		-->
 		
 		<!-- Run the standard tests -->
         <junit printsummary="yes" fork="yes">

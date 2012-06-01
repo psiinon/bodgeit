@@ -19,7 +19,7 @@
  */
 package com.thebodgeitstore.selenium.tests;
 
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -49,6 +49,7 @@ public class FunctionalTest extends SeleneseTestCase {
 	}
 	
 	public void checkMenuLinks(String page) {
+
 		driver.get(site + page);
 		checkMenu("Home", "home.jsp");
 
@@ -64,6 +65,9 @@ public class FunctionalTest extends SeleneseTestCase {
 		driver.get(site + page);
 		checkMenu("Your Basket", "basket.jsp");
 		
+		driver.get(site + page);
+		checkMenu("Search", "search.jsp");
+		
 	}
 	
 	public void tstMenuLinks() {
@@ -72,6 +76,7 @@ public class FunctionalTest extends SeleneseTestCase {
 		checkMenuLinks("contact.jsp");
 		checkMenuLinks("login.jsp");
 		checkMenuLinks("basket.jsp");
+		checkMenuLinks("search.jsp");
 	}
 
 	public void registerUser(String user, String password) {
@@ -154,11 +159,21 @@ public class FunctionalTest extends SeleneseTestCase {
 		driver.findElement(By.id("submit")).click();
 	}
 
+	public void tstSearch() {
+		driver.get(site + "search.jsp?q=doo");
+		
+		// TODO check the results!
+		//driver.findElement(By.name("q")).sendKeys("doo");
+		
+	}
+
 	public void testAll() {
 		tstMenuLinks();
 		tstRegisterUser();
 		tstRegisterAndLoginUser();
 		tstAddProductsToBasket();
+		tstSearch();
+		
 	}
 
 	public void tearDown() throws Exception {
@@ -181,4 +196,12 @@ public class FunctionalTest extends SeleneseTestCase {
 		this.site = site;
 	}
 	
+	public static void main(String[] args) throws Exception {
+		FunctionalTest test = new FunctionalTest();
+		test.setUp();
+		test.testAll();
+		test.tearDown();
+		
+	}
+
 }
