@@ -78,8 +78,12 @@
 			    	<ignoreAlert risk="Low" reliability="Warning"/>
 			    will ignore all alerts with a Low risk and Warning reliability
 			    The url, param and other fields are all regexs 
-	    	 -->
+	    	-->
+	    	
+			<ignoreAlert alert="X-Content-Type-Options header missing" risk="Low" reliability="Warning"/> 
+	    	<ignoreAlert alert="Cross Site Request Forgery" risk="Medium" reliability="Warning"/> 
 	    	<ignoreAlert alert="Cookie set without HttpOnly flag" risk="Low" reliability="Warning"/>
+	    	<ignoreAlert alert="X-Frame-Options header not set" risk="Informational" reliability="Warning"/> 
 	    </alertCheckTask>
 	</target>
 	
