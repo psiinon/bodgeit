@@ -19,7 +19,7 @@
  */
 package com.thebodgeitstore.selenium.tests;
 
-import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang.RandomStringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -27,6 +27,10 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 
 import com.thoughtworks.selenium.SeleneseTestCase;
 
+/*
+ * Note that this is an example of how to use ZAP with Selenium tests,
+ * not a good example of how to write good Selenium tests!
+ */
 public class FunctionalTest extends SeleneseTestCase {
 
 	private WebDriver driver;
@@ -42,9 +46,21 @@ public class FunctionalTest extends SeleneseTestCase {
 		this.setDriver(new FirefoxDriver());
 	}
 	
+	private void sleep() {
+		try {
+			Thread.sleep(300);
+		} catch (InterruptedException e) {
+			// Ignore
+		}
+		
+	}
+	
 	public void checkMenu(String linkText, String page) {
+		sleep();
 		WebElement link = driver.findElement(By.linkText(linkText));
 		link.click();
+		sleep();
+
 		assertEquals(site + page, driver.getCurrentUrl());
 	}
 	
@@ -94,15 +110,8 @@ public class FunctionalTest extends SeleneseTestCase {
 		
 		link = driver.findElement(By.id("submit"));
 		link.click();
+		sleep();
 		
-		/*
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			// Ignore
-		}
-		*/
-
 	}
 
 	public void loginUser(String user, String password) {
@@ -116,15 +125,7 @@ public class FunctionalTest extends SeleneseTestCase {
 		
 		link = driver.findElement(By.id("submit"));
 		link.click();
-		
-		/*
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			// Ignore
-		}
-		*/
-
+		sleep();
 	}
 
 	public void tstRegisterUser() {
@@ -147,20 +148,30 @@ public class FunctionalTest extends SeleneseTestCase {
 	
 	public void tstAddProductsToBasket() {
 		driver.get(site + "product.jsp?typeid=1");
+		sleep();
 		driver.findElement(By.linkText("Basic Widget")).click();
+		sleep();
 		driver.findElement(By.id("submit")).click();
+		sleep();
 		
 		driver.get(site + "product.jsp?typeid=2");
+		sleep();
 		driver.findElement(By.linkText("Thingie 2")).click();
+		sleep();
 		driver.findElement(By.id("submit")).click();
+		sleep();
 		
 		driver.get(site + "product.jsp?typeid=3");
+		sleep();
 		driver.findElement(By.linkText("TGJ CCC")).click();
+		sleep();
 		driver.findElement(By.id("submit")).click();
+		sleep();
 	}
 
 	public void tstSearch() {
 		driver.get(site + "search.jsp?q=doo");
+		sleep();
 		
 		// TODO check the results!
 		//driver.findElement(By.name("q")).sendKeys("doo");
