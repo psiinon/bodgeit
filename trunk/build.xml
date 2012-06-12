@@ -60,7 +60,7 @@
         		<fileset dir="lib">
         			<include name="*.jar" />
         		</fileset>
-        		<pathelement location="build/WEB-INF/classes"/>
+        		<pathelement location="bin"/>
             </classpath>
             <formatter type="plain"/>
             <formatter type="xml"/>
