@@ -96,7 +96,8 @@
         			<include name="*.jar" />
         		</fileset>
         		<fileset dir="lib">
-        			<include name="*.jar" />
+        			<!--include name="*.jar" /-->
+        			<include name="selenium-server-standalone-*.jar" />
         		</fileset>
         		<pathelement location="bin"/>
             </classpath>
