@@ -12,6 +12,11 @@
 
 	TODO: Work out how this should be done properly, clean up and document ;)
 	-->
+	
+	<!-- Useful for debugging - Ant can pick up a different version of the JRE
+	<echo message="The Java version is: ${ant.java.version}"/>
+	<echo message="The Java home directory is: ${java.home}"/>
+	-->
 
 	<taskdef name="accessUrlTask" classname="org.zaproxy.clientapi.ant.AccessUrlTask"/>
 	<taskdef name="activeScanUrlTask" classname="org.zaproxy.clientapi.ant.ActiveScanUrlTask"/>
@@ -57,11 +62,11 @@
 	</target>
 
 	<target name="spider">
-	    <spiderUrlTask zapAddress="${zap.addr}" zapPort="${zap.port}" url="${zap.target}" debug="true"/>
+	    <spiderUrlTask zapAddress="${zap.addr}" zapPort="${zap.port}" url="${zap.targetApp}" debug="true"/>
 	</target>
 
 	<target name="activescan">
-	    <activeScanUrlTask zapAddress="${zap.addr}" zapPort="${zap.port}" url="${zap.target}" debug="true"/>
+	    <activeScanUrlTask zapAddress="${zap.addr}" zapPort="${zap.port}" url="${zap.targetApp}" debug="true"/>
 	</target>
 	
 	<target name="savesession">
