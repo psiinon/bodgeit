@@ -14,7 +14,7 @@
 			getServletContext().log("System error: " + e);
 		}
 	}
-	
+
 	public void jspDestroy() {
 		try {
 			if (conn != null) {
@@ -41,14 +41,14 @@ if (request.getMethod().equals("POST") && username != null) {
 		rs = stmt.executeQuery("SELECT * FROM Users WHERE (name = '" + username + "' AND password = '" + password + "')");
 		if (rs.next()) {
 			loggedIn = true;
-			debug="Logged in";				
+			debug="Logged in";
 			// We must have been given the right credentials, right? ;)
 			// Put credentials in the session
 			String userid = "" + rs.getInt("userid");
 			session.setAttribute("username", rs.getString("name"));
 			session.setAttribute("userid", userid);
 			session.setAttribute("usertype", rs.getString("type"));
-			
+
 			// Update the scores
 			if (userid.equals("3")) {
 				stmt.execute("UPDATE Score SET status = 1 WHERE task = 'LOGIN_TEST'");
@@ -56,7 +56,7 @@ if (request.getMethod().equals("POST") && username != null) {
 				stmt.execute("UPDATE Score SET status = 1 WHERE task = 'LOGIN_USER1'");
 			} else if (userid.equals("2")) {
 				stmt.execute("UPDATE Score SET status = 1 WHERE task = 'LOGIN_ADMIN'");
-			} 
+			}
 
 			Cookie[] cookies = request.getCookies();
 			String basketId = null;
@@ -75,7 +75,7 @@ if (request.getMethod().equals("POST") && username != null) {
 					// Merge baskets
 					debug += " currentbasketid = " + cBasketId;
 					stmt.execute("UPDATE BasketContents SET basketid = " + cBasketId + " WHERE basketid = " + basketId);
-					
+
 				} else {
 					stmt.execute("UPDATE Users SET currentbasketid = " + basketId + " WHERE userid = " + userid);
 				}
@@ -106,9 +106,17 @@ if ("true".equals(request.getParameter("debug"))) {
 // Display the form
 if (request.getMethod().equals("POST") && username != null) {
 	if (loggedIn) {
+		if (username.replaceAll("\\s", "").toLowerCase().indexOf("<script>alert(\"xss\")</script>") >= 0) {
+			Statement stmt = conn.createStatement();
+			try {
+				stmt.execute("UPDATE Score SET status = 1 WHERE task = 'XSS_LOGIN'");
+			} finally {
+				stmt.close();
+			}
+		}
 		out.println("<br/>You have logged in successfully: " + username);
 		return;
-		
+
 	} else {
 		out.println("<p style=\"color:red\">You supplied an invalid name or password.</p>");
 
