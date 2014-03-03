@@ -1,35 +1,9 @@
 <%@page import="org.apache.commons.lang3.StringEscapeUtils"%>
 <%@ page import="java.sql.*" %>
-<%!
-	private Connection conn = null;
 
-	public void jspInit() {
-		try {
-			// Get hold of the JDBC driver
-			Class.forName("org.hsqldb.jdbcDriver" );
-			// Establish a connection to an in memory db
-			conn = DriverManager.getConnection("jdbc:hsqldb:mem:SQL", "sa", "");
-		} catch (SQLException e) {
-			getServletContext().log("Db error: " + e);
-		} catch (Exception e) {
-			getServletContext().log("System error: " + e);
-		}
-	}
-	
-	public void jspDestroy() {
-		try {
-			if (conn != null) {
-				conn.close();
-			}
-		} catch (SQLException e) {
-			getServletContext().log("Db error: " + e);
-		} catch (Exception e) {
-			getServletContext().log("System error: " + e);
-		}
-	}
-        
-%>
+<%@ include file="/dbconnection.jspf" %>
 <jsp:include page="/header.jsp"/>
+
 <h3>Search</h3>
 <font size="-1">
 <%

@@ -1,32 +1,6 @@
 <%@ page import="java.sql.*" %>
-<%!
-	private Connection conn = null;
 
-	public void jspInit() {
-		try {
-			// Get hold of the JDBC driver
-			Class.forName("org.hsqldb.jdbcDriver" );
-			// Establish a connection to an in memory db
-			conn = DriverManager.getConnection("jdbc:hsqldb:mem:SQL", "sa", "");
-		} catch (SQLException e) {
-			getServletContext().log("Db error: " + e);
-		} catch (Exception e) {
-			getServletContext().log("System error: " + e);
-		}
-	}
-
-	public void jspDestroy() {
-		try {
-			if (conn != null) {
-				conn.close();
-			}
-		} catch (SQLException e) {
-			getServletContext().log("Db error: " + e);
-		} catch (Exception e) {
-			getServletContext().log("System error: " + e);
-		}
-	}
-%>
+<%@ include file="/dbconnection.jspf" %>
 
 <%
 boolean loggedIn = false;
@@ -130,15 +104,15 @@ Please enter your credentials: <br/><br/>
 	<table>
 	<tr>
 		<td>Username:</td>
-		<td><input id="username" name="username"></input></td>
+		<td><input id="username" name="username"/></td>
 	</tr>
 	<tr>
 		<td>Password:</td>
-		<td><input id="password" name="password" type="password"></input></td>
+		<td><input id="password" name="password" type="password"/></td>
 	</tr>
 	<tr>
 		<td></td>
-		<td><input id="submit" type="submit" value="Login"></input></td>
+		<td><input id="submit" type="submit" value="Login"/></td>
 	</tr>
 	</table>
 	</center>
