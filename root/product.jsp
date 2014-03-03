@@ -1,37 +1,21 @@
 <%@ page import="java.sql.*" %>
 <%@ page import="java.math.*" %>
 <%@ page import="java.text.*" %>
-<%!
-	private Connection conn = null;
 
-	public void jspInit() {
-		try {
-			// Get hold of the JDBC driver
-			Class.forName("org.hsqldb.jdbcDriver" );
-			// Establish a connection to an in memory db
-			conn = DriverManager.getConnection("jdbc:hsqldb:mem:SQL", "sa", "");
-		} catch (SQLException e) {
-			getServletContext().log("Db error: " + e);
-		} catch (Exception e) {
-			getServletContext().log("System error: " + e);
-		}
-	}
-	
-	public void jspDestroy() {
-		try {
-			if (conn != null) {
-				conn.close();
-			}
-		} catch (SQLException e) {
-			getServletContext().log("Db error: " + e);
-		} catch (Exception e) {
-			getServletContext().log("System error: " + e);
-		}
-	}
-%>
+<%@ include file="/dbconnection.jspf" %>
 
 <script type="text/javascript">
-function incQuantity () {
+    function decQuantity () {
+        if (val < 1) {
+            val = 1;
+        }
+        if (q != null) {
+            var val = --q.value;
+            q.value = val;
+        }
+        var q = document.getElementById('quantity');
+    }
+    function incQuantity () {
 	var q = document.getElementById('quantity');
 	if (q != null) {
 		var val = ++q.value;
@@ -41,17 +25,8 @@ function incQuantity () {
 		q.value = val;
 	}
 }
-function decQuantity () {
-	var q = document.getElementById('quantity');
-	if (q != null) {
-		var val = --q.value;
-		if (val < 1) {
-			val = 1;
-		}
-		q.value = val;
-	}
-}
 </script>
+
 <jsp:include page="/header.jsp"/>
 
 <%

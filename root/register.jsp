@@ -1,32 +1,6 @@
 <%@ page import="java.sql.*" %>
-<%!
-	private Connection conn = null;
 
-	public void jspInit() {
-		try {
-			// Get hold of the JDBC driver
-			Class.forName("org.hsqldb.jdbcDriver" );
-			// Establish a connection to an in memory db
-			conn = DriverManager.getConnection("jdbc:hsqldb:mem:SQL", "sa", "");
-		} catch (SQLException e) {
-			getServletContext().log("Db error: " + e);
-		} catch (Exception e) {
-			getServletContext().log("System error: " + e);
-		}
-	}
-	
-	public void jspDestroy() {
-		try {
-			if (conn != null) {
-				conn.close();
-			}
-		} catch (SQLException e) {
-			getServletContext().log("Db error: " + e);
-		} catch (Exception e) {
-			getServletContext().log("System error: " + e);
-		}
-	}
-%>
+<%@ include file="/dbconnection.jspf" %>
 
 <%
 String username = (String) request.getParameter("username");

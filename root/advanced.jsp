@@ -1,43 +1,18 @@
 <%@ page import="java.sql.*" %>
 <%@ page import="java.util.UUID" %>
 <%@page import="com.thebodgeitstore.util.AES"%>
-<%!
-	private Connection conn = null;
 
-	public void jspInit() {
-		try {
-			// Get hold of the JDBC driver
-			Class.forName("org.hsqldb.jdbcDriver" );
-			// Establish a connection to an in memory db
-			conn = DriverManager.getConnection("jdbc:hsqldb:mem:SQL", "sa", "");
-		} catch (SQLException e) {
-			getServletContext().log("Db error: " + e);
-		} catch (Exception e) {
-			getServletContext().log("System error: " + e);
-		}
-	}
-	
-	public void jspDestroy() {
-		try {
-			if (conn != null) {
-				conn.close();
-			}
-		} catch (SQLException e) {
-			getServletContext().log("Db error: " + e);
-		} catch (Exception e) {
-			getServletContext().log("System error: " + e);
-		}
-	}
-        
-        public static String implode(String[] ary, String delim) {
-            String out = "";
-            for(int i=0; i<ary.length; i++) {
-                if(i!=0) { out += delim; }
-                out += ary[i];
-            }
-            return out;
-        }
-        
+<%@ include file="/dbconnection.jspf" %>
+
+<%!
+public static String implode(String[] ary, String delim) {
+String out = "";
+for(int i=0; i<ary.length; i++) {
+if(i!=0) { out += delim; }
+out += ary[i];
+}
+return out;
+}
 %>
 <jsp:include page="/header.jsp"/>
 <%
@@ -176,11 +151,11 @@ if (request.getMethod().equals("POST") && query != null){
 %>
 <form id="advanced" name="advanced" method="POST" onsubmit="return validateForm(this);false;">
 <table>
-<tr><td>Product:</td><td><input id='product' type='text' name='product' /></td></td>
-<tr><td>Description:</td><td><input id='desc' type='text' name='description' /></td></td>
-<tr><td>Type:</td><td><input id='type' type='text' name='type' /></td></td>
-<tr><td>Price:</td><td><input id='price' type='text' name='price' /></td></td>
-<tr><td></td><td><input type='submit' value='Search'/></td></td>
+<tr><td>Product:</td><td><input id='product' type='text' name='product' /></td></tr>
+<tr><td>Description:</td><td><input id='desc' type='text' name='description' /></td></tr>
+<tr><td>Type:</td><td><input id='type' type='text' name='type' /></td></tr>
+<tr><td>Price:</td><td><input id='price' type='text' name='price' /></td></tr>
+<tr><td></td><td><input type='submit' value='Search'/></td></tr>
 </table>
 </form>
 <form id="query" name="advanced" method="POST">

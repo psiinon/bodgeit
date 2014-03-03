@@ -1,32 +1,6 @@
 <%@ page import="java.sql.*" %>
-<%!
-	private Connection conn = null;
 
-	public void jspInit() {
-		try {
-			// Get hold of the JDBC driver
-			Class.forName("org.hsqldb.jdbcDriver" );
-			// Establish a connection to an in memory db
-			conn = DriverManager.getConnection("jdbc:hsqldb:mem:SQL", "sa", "");
-		} catch (SQLException e) {
-			getServletContext().log("Db error: " + e);
-		} catch (Exception e) {
-			getServletContext().log("System error: " + e);
-		}
-	}
-	
-	public void jspDestroy() {
-		try {
-			if (conn != null) {
-				conn.close();
-			}
-		} catch (SQLException e) {
-			getServletContext().log("Db error: " + e);
-		} catch (Exception e) {
-			getServletContext().log("System error: " + e);
-		}
-	}
-%>
+<%@ include file="/dbconnection.jspf" %>
 <jsp:include page="/header.jsp"/>
 
 <%
@@ -84,15 +58,15 @@ Change your password: <br/><br/>
 	</tr>
 	<tr>
 		<td>New Password:</td>
-		<td><input id="password1" name="password1" type="password"></input></td>
+		<td><input id="password1" name="password1" type="password"/></td>
 	</tr>
 	<tr>
 		<td>Repeat Password:</td>
-		<td><input id="password2" name="password2" type="password"></input></td>
+		<td><input id="password2" name="password2" type="password"/></td>
 	</tr>
 	<tr>
 		<td></td>
-		<td><input id="submit" type="submit" value="Submit"></input></td>
+		<td><input id="submit" type="submit" value="Submit"/></td>
 	</tr>
 	</table>
 	</center>
