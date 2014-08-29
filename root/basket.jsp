@@ -156,7 +156,7 @@ function decQuantity (prodid) {
 			stmt = conn.prepareStatement("SELECT * FROM BasketContents WHERE basketid=" + basketId + " AND productid = " + productId);
 			rs = stmt.executeQuery();
 			if (rs.next()) {
-				quantity += rs.getInt("quantity");
+                                quantity = String.valueOf(Integer.parseInt(quantity) + rs.getInt("quantity"));
 				rs.close();
 				stmt.close();
 				stmt = conn.prepareStatement("UPDATE BasketContents SET quantity = " + Integer.parseInt(quantity) + 
