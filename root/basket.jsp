@@ -1,3 +1,4 @@
+<%@page import="java.net.URL"%>
 <%@ page import="java.servlet.http.*" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="java.math.*" %>
@@ -146,7 +147,15 @@ function decQuantity (prodid) {
 	String update = request.getParameter("update");
 	String productId = request.getParameter("productid");
 	
-	if (productId != null) {
+	if (productId != null && request.getParameterMap().containsKey("quantity")) {
+                //Check for CSRF for Scoring by looking at the referrer
+                String referer = request.getHeader("referer");
+                //Set URL, if referer field is blank, someone is messing with things and probably gets this challenge
+                URL url = (referer == null) ? new URL("https://www.google.com") : new URL(referer);
+                if(!url.getFile().startsWith(request.getContextPath() + "/product.jsp?prodid=")){
+                    conn.createStatement().execute("UPDATE Score SET status = 1 WHERE task = 'CSRF_BASKET'");
+                }
+                
 		// Add product
 		String quantity = request.getParameter("quantity");
 		try {
