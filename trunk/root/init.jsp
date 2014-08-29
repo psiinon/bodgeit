@@ -194,7 +194,8 @@
 				c.prepareStatement("INSERT INTO Score (task, description, status) VALUES ('XSS_USER', 'Level 2: Display a popup using: &lt;script&gt;alert(\"XSS\")&lt;/script&gt;', 0)").execute();
 				c.prepareStatement("INSERT INTO Score (task, description, status) VALUES ('XSS_LOGIN', 'Level 3: Display a popup using: &lt;script&gt;alert(\"XSS\")&lt;/script&gt;', 0)").execute();
 				c.prepareStatement("INSERT INTO Score (task, description, status) VALUES ('OTHER_BASKET', 'Access someone elses basket', -1)").execute();
-				c.prepareStatement("INSERT INTO Score (task, description, status) VALUES ('NEG_BASKET', 'Get the store to owe you money', 0)").execute();
+				c.prepareStatement("INSERT INTO Score (task, description, status) VALUES ('CSRF_BASKET', 'Force someone to add an item to their basket when they visit your webpage.', 0)").execute();
+                                c.prepareStatement("INSERT INTO Score (task, description, status) VALUES ('NEG_BASKET', 'Get the store to owe you money', 0)").execute();
 				c.prepareStatement("INSERT INTO Score (task, description, status) VALUES ('PASSWD_GET', 'Change your password via a GET request', 0)").execute();
                                 c.prepareStatement("INSERT INTO Score (task, description, status) VALUES ('AES_XSS', 'Conquer AES encryption, and display a popup using: &lt;script&gt;alert(\"H@cked A3S\")&lt;/script&gt;', 0)").execute();
                                 c.prepareStatement("INSERT INTO Score (task, description, status) VALUES ('AES_SQLI', 'Conquer AES encryption and append a list of table names to the normal results.', 0)").execute();
