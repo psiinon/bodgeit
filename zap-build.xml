@@ -20,6 +20,7 @@
 
 	<taskdef name="accessUrlTask" classname="org.zaproxy.clientapi.ant.AccessUrlTask"/>
 	<taskdef name="activeScanUrlTask" classname="org.zaproxy.clientapi.ant.ActiveScanUrlTask"/>
+	<taskdef name="activeScanSubtreeTask" classname="org.zaproxy.clientapi.ant.ActiveScanSubtreeTask"/>
 	<taskdef name="alertCheckTask" classname="org.zaproxy.clientapi.ant.AlertCheckTask"/>
 	<taskdef name="loadSessionTask" classname="org.zaproxy.clientapi.ant.LoadSessionTask"/>
 	<taskdef name="newSessionTask" classname="org.zaproxy.clientapi.ant.NewSessionTask"/>
@@ -43,7 +44,7 @@
 			</classpath>
 		</java>
 		<!-- Give ZAP a chance to start -->
-		<sleep seconds="10"/>
+		<sleep seconds="30"/>
 	</target>
 
 	<target name="startZapDaemon">
@@ -66,11 +67,11 @@
 	</target>
 
 	<target name="activescan">
-	    <activeScanUrlTask zapAddress="${zap.addr}" zapPort="${zap.port}" url="${zap.targetApp}" debug="true"/>
+	    <activeScanSubtreeTask zapAddress="${zap.addr}" zapPort="${zap.port}" url="${zap.targetApp}" debug="true"/>
 	</target>
 	
 	<target name="savesession">
-	    <saveSessionTask zapAddress="${zap.addr}" zapPort="${zap.port}" name="${zap.session}" debug="true"/>
+	    <saveSessionTask zapAddress="${zap.addr}" zapPort="${zap.port}" name="${user.dir}/${zap.session}" debug="true"/>
 	</target>
 
 	<target name="alertcheck">

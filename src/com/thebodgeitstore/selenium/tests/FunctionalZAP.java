@@ -36,7 +36,7 @@ public class FunctionalZAP extends FunctionalTest {
 
 		Proxy proxy = new Proxy();
 		proxy.setHttpProxy(System.getProperty("zap.proxy"));
-
+		
 		// We use firefox as an example here.
 		DesiredCapabilities capabilities = DesiredCapabilities.firefox();
 		capabilities.setCapability(CapabilityType.PROXY, proxy);
@@ -45,5 +45,14 @@ public class FunctionalZAP extends FunctionalTest {
 		WebDriver driver = new FirefoxDriver(capabilities);
 		this.setDriver(driver);
 	}
+
+	public static void main(String[] args) throws Exception {
+		FunctionalZAP test = new FunctionalZAP();
+		test.setUp();
+		test.testAll();
+		test.tearDown();
+		
+	}
+
 
 }

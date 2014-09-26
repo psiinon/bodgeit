@@ -2,6 +2,7 @@
 
 	<!-- This file contains all of the environment specific configuration, change it for your setup -->
     <property file="local.properties"/>
+	<dirname file="${ant.file}" property="bodgeit.home"/>
 
 	<path id="java.classpath">
 		<fileset dir="root/WEB-INF/lib">
@@ -15,6 +16,11 @@
 		</fileset>
 		<pathelement location="build/WEB-INF/classes"/>
 	</path>
+
+	<target name="hack">
+		<echo message="file=$(ant.file) home=${ant.home} bodge=${bodgeit.home}"/>
+	</target>
+		
 
 	<!-- Compile all of the source code -->
 	<target name="compile">
@@ -57,9 +63,6 @@
         		<fileset dir="lib">
         			<include name="*.jar" />
         		</fileset>
-        		<fileset dir="lib">
-        			<include name="*.jar" />
-        		</fileset>
         		<pathelement location="bin"/>
             </classpath>
             <formatter type="plain"/>
@@ -72,21 +75,7 @@
 		</junit>
 	</target>
 
-	<target name="zap-test">
-		<!-- Your servlet engine must be running when you start this test -->
-
-		<!-- Start ZAP with UI -->
-		<ant antfile="zap-build.xml" target="startZap" inheritAll="false"/>
-
-		<!-- OR Start ZAP in background -->
-		<!-- 
-			IMPORTANT - there is a bug in ZAP 1.4.0 which means ZAP running in daemon mode will exit 
-			when you save the session 
-		-->
-		<!--
-		<ant antfile="zap-build.xml" target="startZapDaemon" inheritAll="false"/>
-		-->
-		
+	<target name="zap-proxy-tests">
 		<!-- Run the standard tests -->
         <junit printsummary="yes" fork="yes">
         	<sysproperty key="zap.proxy" value="${zap.addr}:${zap.port}"/>
@@ -96,8 +85,7 @@
         			<include name="*.jar" />
         		</fileset>
         		<fileset dir="lib">
-        			<!--include name="*.jar" /-->
-        			<include name="selenium-server-standalone-*.jar" />
+        			<include name="*.jar" />
         		</fileset>
         		<pathelement location="bin"/>
             </classpath>
@@ -109,6 +97,202 @@
                 </fileset>
             </batchtest>
 		</junit>
+	</target>
+
+	<target name="zap-spider">
+		<java classname="org.zaproxy.clientapi.core.ClientApiMain">
+			<arg value="spider"/>
+			<arg value="url=${zap.targetApp}"/>
+			<arg value="zapaddr=${zap.addr}"/>
+			<arg value="zapport=${zap.port}"/>
+			<arg value="debug=true"/>
+			
+			<classpath>
+        		<fileset dir="lib">
+        			<include name="zap-api*.jar" />
+        		</fileset>
+			</classpath>
+		</java>
+	</target>
+
+	<target name="zap-ascan">
+		<java classname="org.zaproxy.clientapi.core.ClientApiMain">
+			<arg value="activeScanSubtree"/>
+			<arg value="url=${zap.targetApp}"/>
+			<arg value="zapaddr=${zap.addr}"/>
+			<arg value="zapport=${zap.port}"/>
+			<arg value="debug=true"/>
+			
+			<classpath>
+        		<fileset dir="lib">
+        			<include name="zap-api*.jar" />
+        		</fileset>
+			</classpath>
+		</java>
+	</target>
+
+	<target name="zap-saveSession">
+		<tstamp>
+			<format property="timestamp" pattern="yyyy-MM-dd-HH-mm-ss"/>
+		</tstamp>
+		<java classname="org.zaproxy.clientapi.core.ClientApiMain">
+			<arg value="saveSession"/>
+			<arg value="sessionName=${basedir}/bodgeit-${timestamp}"/>
+			<arg value="zapaddr=${zap.addr}"/>
+			<arg value="zapport=${zap.port}"/>
+			<arg value="debug=true"/>
+			
+			<classpath>
+        		<fileset dir="lib">
+        			<include name="zap-api*.jar" />
+        		</fileset>
+			</classpath>
+		</java>
+	</target>
+
+	<target name="zap-showAlerts">
+		<java classname="org.zaproxy.clientapi.core.ClientApiMain" failonerror="true">
+			<arg value="showAlerts"/>
+			<arg value="zapaddr=${zap.addr}"/>
+			<arg value="zapport=${zap.port}"/>
+			<arg value="debug=true"/>
+			
+			<classpath>
+        		<fileset dir="lib">
+        			<include name="zap-api*.jar" />
+        		</fileset>
+			</classpath>
+		</java>
+	</target>
+
+	<target name="zap-checkAlerts">
+		<!-- alertsFile.xml should fail while allAlertsFile.xml should succeed --> 
+		<property name="alertsfile" value="${bodgeit.home}/alertsFile.xml"/>
+		
+		<java classname="org.zaproxy.clientapi.core.ClientApiMain" failonerror="true">
+			<arg value="checkAlerts"/>
+			<arg value="alertsFile=${alertsfile}"/>
+			<arg value="zapaddr=${zap.addr}"/>
+			<arg value="zapport=${zap.port}"/>
+			<arg value="debug=true"/>
+			
+			<classpath>
+        		<fileset dir="lib">
+        			<include name="zap-api*.jar" />
+        		</fileset>
+			</classpath>
+		</java>
+	</target>
+
+	<target name="zap-stop">
+		<java classname="org.zaproxy.clientapi.core.ClientApiMain">
+			<arg value="stop"/>
+			<arg value="zapaddr=${zap.addr}"/>
+			<arg value="zapport=${zap.port}"/>
+			<arg value="debug=true"/>
+			
+			<classpath>
+        		<fileset dir="lib">
+        			<include name="zap-api*.jar" />
+        		</fileset>
+			</classpath>
+		</java>
+	</target>
+
+	<target name="zap-test-daemon" 
+		description="Starts ZAP as a daemon, run the Bodgeit tests through it and then scan for vulnerabilities">
+		<!-- Your servlet engine must be running when you start this test -->
+
+		<!-- Start ZAP in background -->
+		<ant antfile="zap-build.xml" target="startZapDaemon" inheritAll="false"/>
+
+		<antcall target="zap-test"/>		
+	</target>
+
+	<target name="zap-test-ui"
+		description="Starts the ZAP UI, run the Bodgeit tests through it and then scan for vulnerabilities">
+		<!-- Your servlet engine must be running when you start this test -->
+
+		<!-- Start ZAP with UI -->
+		<ant antfile="zap-build.xml" target="startZap" inheritAll="false"/>
+
+		<antcall target="zap-test"/>		
+	</target>
+
+	<target name="zap-test"
+		description="Runs the Bodgeit tests through ZAP (which must be running) and then scan for vulnerabilities">
+		<!-- ZAP must be running when you start this test -->
+
+		<antcall target="zap-proxy-tests"/>		
+
+		<sleep seconds="5"/>
+
+		<!-- Spider the whole site -->
+		<antcall target="zap-spider"/>
+
+		<sleep seconds="5"/>
+
+		<!-- Active scan the whole site -->
+		<antcall target="zap-ascan"/>		
+
+		<sleep seconds="3"/>
+
+		<!-- Save to a timestamped session file -->
+		<antcall target="zap-saveSession"/>
+
+		<!-- Give the passive scanner thread a chance to catch up -->
+		<sleep seconds="5"/>
+		
+		<!-- Check the alerts logged -->
+		<antcall target="zap-checkAlerts"/>
+
+		<!--
+		Note that if the above test fails ZAP will not be stopped, so you will need to call the zap-stop target directly.
+		-->
+
+		<!-- Stop ZAP -->
+		<antcall target="zap-stop"/>
+
+	</target>
+
+	<target name="zap-test-tasks-daemon"
+		description="Starts ZAP as a daemon, run the Bodgeit tests through it and then scan for vulnerabilities using Ant tasks">
+		<!-- Your servlet engine must be running when you start this test -->
+		<!-- 
+			You must also have configured Eclipse to use the ZAP client jar as per the 
+			instructions in zap-build.xml
+		-->
+
+		<!-- Start ZAP in background -->
+		<ant antfile="zap-build.xml" target="startZapDaemon" inheritAll="false"/>
+
+		<antcall target="zap-test-tasks"/>		
+	</target>
+
+	<target name="zap-test-tasks-ui"
+		description="Starts the ZAP UI, run the Bodgeit tests through it and then scan for vulnerabilities using Ant tasks">
+		<!-- Your servlet engine must be running when you start this test -->
+		<!-- 
+			You must also have configured Eclipse to use the ZAP client jar as per the 
+			instructions in zap-build.xml
+		-->
+
+		<!-- Start ZAP with UI -->
+		<ant antfile="zap-build.xml" target="startZap" inheritAll="false"/>
+
+		<antcall target="zap-test-tasks"/>		
+	</target>
+
+	
+	<target name="zap-test-tasks" 
+		description="Runs the Bodgeit tests through ZAP (which must be running) and then scan for vulnerabilities using Ant tasks">
+		<!-- ZAP must be running when you start this test -->
+		<!-- 
+			You must also have configured Eclipse to use the ZAP client jar as per the 
+			instructions in zap-build.xml
+		-->
+
+		<antcall target="zap-proxy-tests"/>		
 
 		<sleep seconds="5"/>
 
@@ -128,7 +312,7 @@
 		</tstamp>
 		<ant antfile="zap-build.xml" target="savesession" inheritAll="false">
 			<!-- Override the session name -->
-			<property name="zap.session" value="bodgeit-${timestamp}"/>
+			<property name="zap.session" value="${bodgeit.home}/build/bodgeit-${timestamp}"/>
 		</ant>
 
 		<!-- Give the passive scanner thread a chance to catch up -->
@@ -145,5 +329,6 @@
 		<ant antfile="zap-build.xml" target="stopZap" inheritAll="false"/>
 
 	</target>
+
 
 </project>
