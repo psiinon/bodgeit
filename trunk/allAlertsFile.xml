@@ -1,0 +1,10 @@
+<alerts>
+	<!-- Using this file should result in success -->
+	<ignoreAlert alert="X-Content-Type-Options header missing" risk="Low" reliability="Warning"/> 
+	<ignoreAlert alert="Cross Site Request Forgery" risk="Medium" reliability="Warning"/> 
+	<ignoreAlert alert="Cookie set without HttpOnly flag" risk="Low" reliability="Warning"/>
+	<ignoreAlert alert="X-Frame-Options header not set" risk="Informational" reliability="Warning"/> 
+	<ignoreAlert alert="Password Autocomplete in browser" risk="Low" reliability="Warning"/> 
+	<ignoreAlert alert="Cross Site Scripting (Reflected)" risk="High" reliability="Warning"/> 
+	<ignoreAlert alert="SQL Injection" risk="High" reliability="Warning"/> 
+</alerts>

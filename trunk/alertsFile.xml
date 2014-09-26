@@ -1,0 +1,6 @@
+<alerts>
+	<ignoreAlert alert="X-Content-Type-Options header missing" risk="Low" reliability="Warning"/> 
+	<ignoreAlert alert="Cross Site Request Forgery" risk="Medium" reliability="Warning"/> 
+	<ignoreAlert alert="Cookie set without HttpOnly flag" risk="Low" reliability="Warning"/>
+	<ignoreAlert alert="X-Frame-Options header not set" risk="Informational" reliability="Warning"/> 
+</alerts>
