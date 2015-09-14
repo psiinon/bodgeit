@@ -14,7 +14,7 @@ Then point your browser at (for example) http://localhost:8080/bodgeit
 
 You may find it easier to find vulnerabilities using a pen test tool.
 
-If you dont have a favourite one, I'd recommend the [Zed Attack Proxy](https://code.google.com/p/zaproxy/) (for which I'm the project lead).
+If you dont have a favourite one, I'd recommend the [Zed Attack Proxy](https://github.com/zaproxy/zaproxy) (for which I'm the project lead).
 
 The Bodge It Store include the following significant vulnerabilities:
   * Cross Site Scripting
