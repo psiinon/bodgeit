@@ -21,38 +21,45 @@ package com.thebodgeitstore.selenium.tests;
 
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class FunctionalZAP extends FunctionalTest {
 
-	public void setUp() throws Exception {
-		String target = System.getProperty("zap.targetApp");
-		if (target != null && target.length() > 0) {
-			// Theres an override
-			setSite(target);
-		}
+    private static Logger log = LoggerFactory.getLogger(FunctionalZAP.class);
 
-		Proxy proxy = new Proxy();
-		proxy.setHttpProxy(System.getProperty("zap.proxy"));
-		
-		// We use firefox as an example here.
-		DesiredCapabilities capabilities = DesiredCapabilities.firefox();
-		capabilities.setCapability(CapabilityType.PROXY, proxy);
+    public void setUp() throws Exception {
+        String target = System.getProperty("zap.targetApp");
+        log.info("Considering a ZAP target " + target);
+        if (target != null && target.length() > 0) {
+            // Theres an override
+            setSite(target);
+        }
 
-		// You could use any webdriver implementation here
-		WebDriver driver = new FirefoxDriver(capabilities);
-		this.setDriver(driver);
-	}
+        Proxy proxy = new Proxy();
+        log.info("Setting a ZAP proxy to " + System.getProperty("zap.proxy"));
+        proxy.setHttpProxy(System.getProperty("zap.proxy"));
+        
+        DesiredCapabilities dcap = new DesiredCapabilities();
+        String[] phantomArgs = new  String[] {
+            "--ignore-ssl-errors=true",
+            "--webdriver-loglevel=ALL"
+        };
+        dcap.setCapability("phantomjs.cli.args", phantomArgs);
+        dcap.setCapability(CapabilityType.PROXY, proxy);
+        this.setDriver(new PhantomJSDriver(dcap));
+    }
 
-	public static void main(String[] args) throws Exception {
-		FunctionalZAP test = new FunctionalZAP();
-		test.setUp();
-		test.testAll();
-		test.tearDown();
-		
-	}
+    public static void main(String[] args) throws Exception {
+        FunctionalZAP test = new FunctionalZAP();
+        test.setUp();
+        test.testAll();
+        test.tearDown();
+    }
 
 
 }
