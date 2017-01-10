@@ -201,6 +201,7 @@ public class FunctionalTest extends SeleneseTestCase {
 
     public void tearDown() throws Exception {
         driver.close();
+        driver.quit();
     }
 
     protected WebDriver getDriver() {

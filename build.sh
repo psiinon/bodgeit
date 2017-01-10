@@ -1,4 +1,7 @@
 #! /bin/bash
+
+# Usage: DEPLOY_PASS="xxxxx" ./build.sh -verbose build deploy test zap-restart zap-proxy-tests zap-test
+
 set -ex
 
 set -o pipefail
@@ -6,10 +9,24 @@ set -o pipefail
 : ${ANT_HOME:="c:/apache-ant-1.9.2"}
 ANT_HOME=$(cygpath -m "${ANT_HOME}")
 
+: ${EXTRA_JARS:="c:/jars"}
+EXTRA_JARS=$(cygpath -m "${EXTRA_JARS}")
+
 : ${JAVA_HOME:="c:/jdk"}
 export JAVA_HOME=$(cygpath -m "${JAVA_HOME}")
 
+: ${CATALINA_HOME:="c:/tomcat"}
+export CATALINA_HOME=$(cygpath -m "${CATALINA_HOME}")
+
+: ${DEPLOY_USER:="tomcat"}
+export DEPLOY_USER
+export DEPLOY_PASS
+
 : ${SELENIUM_DRIVERS:="c:/selenium-drivers"}
+
+: ${ZAP_DIR:="C:/Program Files (x86)/OWASP/Zed Attack Proxy"}
+
+: ${ZAP_PORT:="8090"}
 
 if [[ "${OSTYPE}" == "cygwin" ]] ; then
     jhu="$(cygpath -u "${JAVA_HOME}")"
@@ -30,8 +47,7 @@ export PATH="${sdu}:${jhu}/bin:${ahu}/bin:/bin:/usr/bin:$(cygpath -uW):$(cygpath
 echo "${PWD}" > build.log
 echo "+ $0 $*" >> build.log
 
-echo "+ taskkill /f /im phantomjs.exe /im java.exe || :" >> build.log
-( taskkill /f /im phantomjs.exe /im java.exe || : ) 2>&1 | tee -a build.log
+# ( taskkill /f /im phantomjs.exe /im java.exe || : ) 2>&1 | tee -a build.log
 
 h=$(hostname -f | tr '[[:upper:]]' '[[:lower:]]')
 
@@ -42,13 +58,14 @@ cmd=("${jhu}/bin/java" \
     org.apache.tools.ant.launch.Launcher \
     -f "build.xml" \
     -Djava.home="${JAVA_HOME}" \
+    -Dextrajars="${EXTRA_JARS}" \
     -Dzap.target="https://${h}/" \
+    -Dzap.target.port="443" \
     -Dzap.targetApp="https://${h}/bodgeit/" \
     -Dzap.addr="${h}" \
-    -Dzap.port="8090" \
-    -Dzap.dir='C:\\Program Files (x86)\\OWASP\\Zed Attack Proxy' \
+    -Dzap.port="${ZAP_PORT}" \
+    -Dzap.dir="${ZAP_DIR}" \
     "$@")
 
-echo "+ ${cmd[*]}" >> build.log
-"${cmd[@]}" 2>&1 | tee -a build.log
+( "${cmd[@]}" ) 2>&1 | tee -a build.log
 

@@ -4,6 +4,35 @@
     <property file="local.properties"/>
     <dirname file="${ant.file}" property="bodgeit.home"/>
 
+    <property environment="env"/>
+    <property name="catalina.home" value="${env.CATALINA_HOME}"/>
+    <property name="deploy.user" value="${env.DEPLOY_USER}"/>
+    <!-- FIXME: avoid using OS process environments for cleartext passwords -->
+    <property name="deploy.pass" value="${env.DEPLOY_PASS}"/>
+
+    <property name="manager.url" value="${zap.target}manager/text"/>
+
+    <path id="anttomcat.classpath">
+        <fileset dir="${catalina.home}">
+            <include name="lib/catalina-ant.jar"/>
+            <include name="lib/tomcat-coyote.jar"/>
+            <include name="lib/tomcat-util.jar"/>
+            <include name="bin/tomcat-juli.jar"/>
+        </fileset>
+    </path>
+    <!-- this requires JspC: taskdef resource="org/apache/catalina/ant/catalina.tasks" classpathref="anttomcat.classpath"/ -->
+    <taskdef name="catalina-deploy" classname="org.apache.catalina.ant.DeployTask" classpathref="anttomcat.classpath"/>
+    <taskdef name="catalina-undeploy" classname="org.apache.catalina.ant.UndeployTask" classpathref="anttomcat.classpath"/>
+
+    <property name="extrajars" value="c:/jars"/>
+
+    <path id="antcontrib.classpath">
+        <fileset dir="${extrajars}">
+            <include name="ant-contrib*.jar"/>
+        </fileset>
+    </path>
+    <taskdef resource="net/sf/antcontrib/antlib.xml" classpathref="antcontrib.classpath"/>
+
     <path id="java.classpath">
         <fileset dir="root/WEB-INF/lib">
             <include name="*.jar" />
@@ -21,7 +50,6 @@
         <echo message="file=$(ant.file) home=${ant.home} bodge=${bodgeit.home}"/>
     </target>
         
-
     <!-- Compile all of the source code -->
     <target name="compile">
         <mkdir dir="build/WEB-INF/classes"/>
@@ -40,25 +68,22 @@
     </target>
 
     <target name="deploy" depends="build">
-        <delete dir="${deploy.dir}/bodgeit"/>
-        <copy file="build/bodgeit.war" tofile="${deploy.dir}/bodgeit.war"/>
+        <catalina-undeploy url="${manager.url}" failOnError="false" username="${deploy.user}" password="${deploy.pass}" path="/bodgeit"/>
+        <catalina-deploy url="${manager.url}" username="${deploy.user}" password="${deploy.pass}" path="/bodgeit" war="${bodgeit.home}/build/bodgeit.war"/>
     </target>
 
-    <target name="deploy-jsps">
-        <copy toDir="${deploy.dir}/bodgeit">
-            <fileset dir="root">
-                <include name="*.jsp" />
-                <include name="*.css" />
-                <include name="**/*.png" />
-            </fileset>
-        </copy>
+    <target name="test-if-tomcat-is-running">
+        <condition property="tomcat-running">
+            <socket server="${zap.addr}" port="${zap.target.port}"/> 
+        </condition>
     </target>
 
-    <target name="test">
+    <target name="test" depends="test-if-tomcat-is-running" if="tomcat-running">
         <mkdir dir="build/tests"/>
         <!-- Run the JUnit tests -->
         <junit printsummary="yes"
             haltonfailure="true">
+            <sysproperty key="zap.targetApp" value="${zap.targetApp}"/>
             <classpath>
                 <fileset dir="root/WEB-INF/lib">
                     <include name="*.jar" />
@@ -66,12 +91,11 @@
                 <fileset dir="lib">
                     <include name="*.jar" />
                 </fileset>
-                <pathelement location="bin"/>
                 <pathelement location="build/WEB-INF/classes"/>
             </classpath>
             <formatter type="plain"/>
             <formatter type="xml"/>
-            <batchtest fork="yes" todir="build/tests">
+            <batchtest todir="build/tests">
                 <fileset dir="src">
                     <include name="**/*Test.java"/>
                 </fileset>
@@ -79,12 +103,38 @@
         </junit>
     </target>
 
+
+    <target name="restart-zap">
+        <trycatch>
+            <try>
+                <ant antfile="zap-build.xml" target="stopZap" inheritAll="false"/>
+            </try>
+            <catch>
+                <echo message="No ZAP daemon found, as expected."/>
+            </catch>
+        </trycatch>
+        <ant antfile="zap-build.xml" target="startZapDaemon" inheritAll="false"/>
+
+        <condition property="zap-running">
+            <socket server="${zap.addr}" port="${zap.port}"/> 
+        </condition>
+    </target>
+
+    <target name="zap-restart" depends="restart-zap,test-if-tomcat-is-running">
+        <condition property="zap-checked">
+            <and>
+                <isset property="tomcat-running"/>
+                <isset property="zap-running"/>
+            </and>
+        </condition>
+        <fail unless="zap-checked"/>
+    </target>
+
     <target name="zap-proxy-tests">
         <mkdir dir="build/tests"/>
         <!-- Run the standard tests -->
         <junit printsummary="yes" 
-            haltonfailure="true"
-            fork="yes">
+            failureproperty="zapfailure">
             <sysproperty key="zap.proxy" value="${zap.addr}:${zap.port}"/>
             <sysproperty key="zap.targetApp" value="${zap.targetApp}"/>
             <classpath>
@@ -94,12 +144,11 @@
                 <fileset dir="lib">
                     <include name="*.jar" />
                 </fileset>
-                <pathelement location="bin"/>
                 <pathelement location="build/WEB-INF/classes"/>
             </classpath>
             <formatter type="plain"/>
             <formatter type="xml"/>
-            <batchtest fork="yes" todir="build/tests">
+            <batchtest todir="build/tests">
                 <fileset dir="src">
                     <include name="**/FunctionalZAP.java"/>
                 </fileset>
@@ -114,13 +163,7 @@
             You must also have configured Eclipse to use the ZAP client jar as per the 
             instructions in zap-build.xml
         -->
-
-        <!-- Start ZAP in background -->
-        <ant antfile="zap-build.xml" target="startZapDaemon" inheritAll="false"/>
-
         <antcall target="zap-test-tasks"/>
-
-        <ant antfile="zap-build.xml" target="stopZap" inheritAll="false"/>
     </target>
 
     <target name="zap-test-ui"
@@ -146,10 +189,6 @@
             instructions in zap-build.xml
         -->
 
-        <antcall target="zap-proxy-tests"/>
-
-        <sleep seconds="5"/>
-
         <!-- Spider the whole site -->
         <ant antfile="zap-build.xml" target="spider" inheritAll="false"/>
 
@@ -169,10 +208,10 @@
 
             This caused an "internal error".
 
-			C:\cygwin64\home\USER\bodgeit\zap-build.xml:89: org.zaproxy.clientapi.core.ClientApiException: Internal Error
-					at org.zaproxy.clientapi.core.ApiResponseFactory.getResponse(ApiResponseFactory.java:32)
-					at org.zaproxy.clientapi.core.ClientApi.callApi(ClientApi.java:290)
-					at org.zaproxy.clientapi.gen.Core.saveSession(Core.java:326)
+            C:\cygwin64\home\USER\bodgeit\zap-build.xml:89: org.zaproxy.clientapi.core.ClientApiException: Internal Error
+                    at org.zaproxy.clientapi.core.ApiResponseFactory.getResponse(ApiResponseFactory.java:32)
+                    at org.zaproxy.clientapi.core.ClientApi.callApi(ClientApi.java:290)
+                    at org.zaproxy.clientapi.gen.Core.saveSession(Core.java:326)
 
             <property name="zap.session" value="${bodgeit.home}/build/bodgeit-${timestamp}"/>
         ant -->
@@ -180,17 +219,19 @@
         <!-- Give the passive scanner thread a chance to catch up -->
         <sleep seconds="5"/>
         
-        <!-- Check the alerts logged -->
-        <ant antfile="zap-build.xml" target="alertcheck" inheritAll="false"/>
-        
-        <!--
-        Note that if the above test fails ZAP will not be stopped, so you will need to call the stopZap target directly.
-        -->
-
-        <!-- Stop ZAP -->
-        <ant antfile="zap-build.xml" target="stopZap" inheritAll="false"/>
-
+        <trycatch>
+            <try>
+                <!-- Check the alerts logged -->
+                <ant antfile="zap-build.xml" target="alertcheck" inheritAll="false"/>
+            </try>
+            <catch>
+                <fail message="ZAP alerts found"/>
+            </catch>
+            <finally>
+                <!-- Stop ZAP -->
+                <ant antfile="zap-build.xml" target="stopZap" inheritAll="false"/>
+            </finally>
+        </trycatch>
     </target>
-
 
 </project>
