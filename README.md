@@ -1,5 +1,8 @@
 The BodgeIt Store is a vulnerable web application which is currently aimed at people who are new to pen testing.
 
+### Please note that The BodgeIt Store is no longer being worked on
+### You are strongly recommended to use [OWASP Juice Shop](https://www.owasp.org/index.php/OWASP_Juice_Shop_Project) instead!
+
 Note that the BodgeIt Store is now available as a Docker image: https://hub.docker.com/r/psiinon/bodgeit/ 
 
 Some of its features and characteristics:
