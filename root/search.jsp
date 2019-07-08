@@ -69,9 +69,9 @@ if (request.getMethod().equals("GET") && query != null){
 %>
 <FORM name='query' method='GET'>
 <table>
-<tr><td>Search for</td><td><input type='text' name='q'></td></td>
-<tr><td></td><td><input type='submit' value='Search'/></td></td>
-<tr><td></td><td><a href='advanced.jsp' style='font-size:9pt;'>Advanced Search</a></td></td>
+<tr><td>Search for</td><td><input type='text' name='q'></td></tr>
+<tr><td></td><td><input type='submit' value='Search'/></td></tr>
+<tr><td></td><td><a href='advanced.jsp' style='font-size:9pt;'>Advanced Search</a></td></tr>
 </table>
 </form>
 <%  
