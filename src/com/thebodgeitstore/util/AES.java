@@ -1,4 +1,4 @@
-package com.thebodgeitstore.util;
+package com.thebodgeitstore.util;;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
