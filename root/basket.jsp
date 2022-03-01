@@ -6,7 +6,6 @@
 <%@ page import="java.util.*" %>
 <%@ page import="java.sql.PreparedStatement" %>
 <%@ include file="/dbconnection.jspf" %>
-
 <script type="text/javascript">
     function incQuantity (prodid) {
     var q = document.getElementById('quantity_' + prodid);
