@@ -33,22 +33,41 @@ jobs:
           echo test, and deploy your project.
       
       # Runs a CLI scan from Github
-      - name: Checkmarx Scan
+      # - name: Checkmarx Scan
   # You may pin to the exact commit or the version.
   # uses: checkmarx-ts/checkmarx-github-action@bb9101ed82fa9485fe5c6677f5608c3a8c077f25
-  uses: checkmarx-ts/checkmarx-github-action@v1.0.3
-  with:
+  # uses: checkmarx-ts/checkmarx-github-action@v1.0.3
+  # with:
     # Checkmarx CLI Action
-    cxAction: Scan # optional, default is Scan
+    # cxAction: Scan # optional, default is Scan
     # Checkmarx Version
-    cxVersion: 9.2 # optional, default is 8.9
+    # cxVersion: 9.2 # optional, default is 8.9
     # IP address or resolvable name of CxSAST web server.
-    cxServer: https://cxflowsls.ngrok.io   # default is https://cxflowsls.ngrok.io
+    # cxServer: https://cxflowsls.ngrok.io   # default is https://cxflowsls.ngrok.io
     # Checkmarx Username
-    cxUsername: admin # default is first.last@company.com
+    # cxUsername: admin # default is first.last@company.com
     # Checkmarx Token
-    cxPassword: Cx!234567 # default is 
+    # cxPassword: Cx!234567 # default is 
     # Checkmarx Team
-    cxTeam: \CxServer # default is 
+    # cxTeam: \CxServer # default is 
     # Checkmarx Project Name
-      
+ # Coverity configuration file.
+# The schema is available here: <install-dir>/doc/configuration-schema.json
+
+# Specifies where the analysis results should be sent.
+commit:
+
+  # Coverity Connect configuration to use when committing defects to Coverity
+  # Connect.
+  connect:
+
+    # The name of the stream to commit the results to.
+    stream: sls-bodgeit-master
+
+    # Absolute URL of where to commit the Coverity Connect results.
+    # url: https://testing.coverity.synopsys.com:443
+    url: https://poc391.coverity.synopsys.com 
+     
+
+
+
