@@ -1,0 +1,14 @@
+
+# Specifies where the analysis results should be sent.
+commit:
+
+  # Coverity Connect configuration to use when committing defects to Coverity
+  # Connect.
+  connect:
+
+    # The name of the stream to commit the results to.
+    stream: sls-bodgeit-master
+
+    # Absolute URL of where to commit the Coverity Connect results.
+    # url: https://testing.coverity.synopsys.com:443
+    url: https://poc391.coverity.synopsys.com
