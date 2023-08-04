@@ -50,15 +50,9 @@ function decQuantity (prodid) {
 		// Dont need to do anything else
 			
 
-//Statement stmt = conn.createStatement();
-//Security Fix
-PreparedStatement preparedStatement = con.prepareStatement(sql);
-try {
-//ResultSet rs = stmt.executeQuery("SELECT * FROM Baskets WHERE basketid = " + basketId);
-String sql = "SELECT * FROM Baskets WHERE basketid =?");
-preparedStatement.setString(1, basketId);
-ResetSet rs = preparedStatement.executeQuery();
-{
+
+		} catch (Exception e) {
+			if ("true".equals(request.getParameter("debug"))) {
 				conn.createStatement().execute("UPDATE Score SET status = 1 WHERE task = 'HIDDEN_DEBUG'");
 				out.println("DEBUG System error: " + e + "<br/><br/>");
 			} else {
