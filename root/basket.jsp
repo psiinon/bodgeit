@@ -4,7 +4,7 @@
 <%@ page import="java.math.*" %>
 <%@ page import="java.text.*" %>
 <%@ page import="java.util.*" %>
-
+<%@ page import="java.sql.PreparedStatement" %>
 <%@ include file="/dbconnection.jspf" %>
 
 <script type="text/javascript">
@@ -49,18 +49,16 @@ function decQuantity (prodid) {
 	if (basketId != null) {
 		// Dont need to do anything else
 			
-		// Well, apart from checking to see if they've accessed someone elses basket ;)
-		Statement stmt = conn.createStatement();
-		try {
-			ResultSet rs = stmt.executeQuery("SELECT * FROM Baskets WHERE basketid = " + basketId);
-			rs.next();
-			String bUserId = "" + rs.getInt("userid");
-			if ((userid == null && ! bUserId.equals("0")) || (userid != null && userid.equals(bUserId))) {
-				conn.createStatement().execute("UPDATE Score SET status = 1 WHERE task = 'OTHER_BASKET'");
-			}
 
-		} catch (Exception e) {
-			if ("true".equals(request.getParameter("debug"))) {
+//Statement stmt = conn.createStatement();
+//Security Fix
+PreparedStatement preparedStatement = con.prepareStatement(sql);
+try {
+//ResultSet rs = stmt.executeQuery("SELECT * FROM Baskets WHERE basketid = " + basketId);
+String sql = "SELECT * FROM Baskets WHERE basketid =?");
+preparedStatement.setString(1, basketId);
+ResetSet rs = preparedStatement.executeQuery();
+{
 				conn.createStatement().execute("UPDATE Score SET status = 1 WHERE task = 'HIDDEN_DEBUG'");
 				out.println("DEBUG System error: " + e + "<br/><br/>");
 			} else {
