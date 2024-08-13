@@ -3,7 +3,7 @@
 # Run via:
 # docker run --rm -p 8080:8080 -i -t psiinon/bodgeit
 
-FROM tomcat:8.0
+FROM tomcat:9.0
 MAINTAINER Simon Bennetts "psiinon@gmail.com"
 
 RUN curl -s -L https://github.com/psiinon/bodgeit/releases/download/1.4.0/bodgeit.war > bodgeit.war && \
