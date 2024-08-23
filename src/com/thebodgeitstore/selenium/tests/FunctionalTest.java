@@ -23,7 +23,11 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.thoughtworks.selenium.SeleneseTestCase;
 
@@ -33,186 +37,195 @@ import com.thoughtworks.selenium.SeleneseTestCase;
  */
 public class FunctionalTest extends SeleneseTestCase {
 
-	private WebDriver driver;
-	private String site = "http://localhost:8080/bodgeit/";
-	
-	public void setUp() throws Exception {
-		String target = System.getProperty("zap.targetApp");
-		if (target != null && target.length() > 0) {
-			// Theres an override
-			site = target;
-		}
-		
-		this.setDriver(new FirefoxDriver());
-	}
-	
-	private void sleep() {
-		try {
-			Thread.sleep(300);
-		} catch (InterruptedException e) {
-			// Ignore
-		}
-		
-	}
-	
-	public void checkMenu(String linkText, String page) {
-		sleep();
-		WebElement link = driver.findElement(By.linkText(linkText));
-		link.click();
-		sleep();
+    private WebDriver driver;
+    private String site = "http://localhost:8080/bodgeit/";
+    private static Logger log = LoggerFactory.getLogger(FunctionalTest.class);
+    
+    public void setUp() throws Exception {
+        String target = System.getProperty("zap.targetApp");
+        if (target != null && target.length() > 0) {
+            // Theres an override
+            site = target;
+        }
 
-		assertEquals(site + page, driver.getCurrentUrl());
-	}
-	
-	public void checkMenuLinks(String page) {
+        DesiredCapabilities dcap = new DesiredCapabilities();
+        String[] phantomArgs = new  String[] {
+            "--webdriver-loglevel=ALL"
+        };
+        dcap.setCapability("phantomjs.cli.args", phantomArgs);
+        this.setDriver(new PhantomJSDriver(dcap));
+    }
+    
+    private void sleep() {
+        try {
+            Thread.sleep(300);
+        } catch (InterruptedException e) {
+            // Ignore
+        }
+        
+    }
+    
+    public void checkMenu(String linkText, String page) {
+        sleep();
+        WebElement link = driver.findElement(By.linkText(linkText));
+        link.click();
+        sleep();
 
-		driver.get(site + page);
-		checkMenu("Home", "home.jsp");
+        assertEquals(site + page, driver.getCurrentUrl());
+    }
+    
+    public void checkMenuLinks(String page) {
 
-		driver.get(site + page);
-		checkMenu("About Us", "about.jsp");
-		
-		driver.get(site + page);
-		checkMenu("Contact Us", "contact.jsp");
-		
-		driver.get(site + page);
-		checkMenu("Login", "login.jsp");
-		
-		driver.get(site + page);
-		checkMenu("Your Basket", "basket.jsp");
-		
-		driver.get(site + page);
-		checkMenu("Search", "search.jsp");
-		
-	}
-	
-	public void tstMenuLinks() {
-		checkMenuLinks("home.jsp");
-		checkMenuLinks("about.jsp");
-		checkMenuLinks("contact.jsp");
-		checkMenuLinks("login.jsp");
-		checkMenuLinks("basket.jsp");
-		checkMenuLinks("search.jsp");
-	}
+        log.info ("navigating to " + site + page);
 
-	public void registerUser(String user, String password) {
-		driver.get(site + "login.jsp");
-		checkMenu("Register", "register.jsp");
-		
-		WebElement link = driver.findElement(By.name("username"));
-		link.sendKeys(user);
+        driver.get(site + page);
+        checkMenu("Home", "home.jsp");
 
-		link = driver.findElement(By.name("password1"));
-		link.sendKeys(password);
-		
-		link = driver.findElement(By.name("password2"));
-		link.sendKeys(password);
-		
-		link = driver.findElement(By.id("submit"));
-		link.click();
-		sleep();
-		
-	}
+        driver.get(site + page);
+        checkMenu("About Us", "about.jsp");
+        
+        driver.get(site + page);
+        checkMenu("Contact Us", "contact.jsp");
+        
+        driver.get(site + page);
+        checkMenu("Login", "login.jsp");
+        
+        driver.get(site + page);
+        checkMenu("Your Basket", "basket.jsp");
+        
+        driver.get(site + page);
+        checkMenu("Search", "search.jsp");
+        
+    }
+    
+    public void tstMenuLinks() {
+        checkMenuLinks("home.jsp");
+        checkMenuLinks("about.jsp");
+        checkMenuLinks("contact.jsp");
+        checkMenuLinks("login.jsp");
+        checkMenuLinks("basket.jsp");
+        checkMenuLinks("search.jsp");
+    }
 
-	public void loginUser(String user, String password) {
-		driver.get(site + "login.jsp");
-		
-		WebElement link = driver.findElement(By.name("username"));
-		link.sendKeys(user);
+    public void registerUser(String user, String password) {
+        driver.get(site + "login.jsp");
+        checkMenu("Register", "register.jsp");
+        
+        WebElement link = driver.findElement(By.name("username"));
+        link.sendKeys(user);
 
-		link = driver.findElement(By.name("password"));
-		link.sendKeys(password);
-		
-		link = driver.findElement(By.id("submit"));
-		link.click();
-		sleep();
-	}
+        link = driver.findElement(By.name("password1"));
+        link.sendKeys(password);
+        
+        link = driver.findElement(By.name("password2"));
+        link.sendKeys(password);
+        
+        link = driver.findElement(By.id("submit"));
+        link.click();
+        sleep();
+        
+    }
 
-	public void tstRegisterUser() {
-		// Create random username so we can rerun test
-		String randomUser = RandomStringUtils.randomAlphabetic(10) + "@test.com";
-		this.registerUser(randomUser, "password");
-		assertTrue(driver.getPageSource().indexOf("You have successfully registered with The BodgeIt Store.") > 0);
-	}
-	
-	public void tstRegisterAndLoginUser() {
-		// Create random username so we can rerun test
-		String randomUser = RandomStringUtils.randomAlphabetic(10) + "@test.com";
-		this.registerUser(randomUser, "password");
-		assertTrue(driver.getPageSource().indexOf("You have successfully registered with The BodgeIt Store.") > 0);
-		checkMenu("Logout", "logout.jsp");
-		
-		this.loginUser(randomUser, "password");
-		assertTrue(driver.getPageSource().indexOf("You have logged in successfully:") > 0);
-	}
-	
-	public void tstAddProductsToBasket() {
-		driver.get(site + "product.jsp?typeid=1");
-		sleep();
-		driver.findElement(By.linkText("Basic Widget")).click();
-		sleep();
-		driver.findElement(By.id("submit")).click();
-		sleep();
-		
-		driver.get(site + "product.jsp?typeid=2");
-		sleep();
-		driver.findElement(By.linkText("Thingie 2")).click();
-		sleep();
-		driver.findElement(By.id("submit")).click();
-		sleep();
-		
-		driver.get(site + "product.jsp?typeid=3");
-		sleep();
-		driver.findElement(By.linkText("TGJ CCC")).click();
-		sleep();
-		driver.findElement(By.id("submit")).click();
-		sleep();
-	}
+    public void loginUser(String user, String password) {
+        driver.get(site + "login.jsp");
+        
+        WebElement link = driver.findElement(By.name("username"));
+        link.sendKeys(user);
 
-	public void tstSearch() {
-		driver.get(site + "search.jsp?q=doo");
-		sleep();
-		
-		// TODO check the results!
-		//driver.findElement(By.name("q")).sendKeys("doo");
-		
-	}
+        link = driver.findElement(By.name("password"));
+        link.sendKeys(password);
+        
+        link = driver.findElement(By.id("submit"));
+        link.click();
+        sleep();
+    }
 
-	public void testAll() {
-		tstMenuLinks();
-		tstRegisterUser();
-		tstRegisterAndLoginUser();
-		tstAddProductsToBasket();
-		tstSearch();
-		
-	}
+    public void tstRegisterUser() {
+        // Create random username so we can rerun test
+        String randomUser = RandomStringUtils.randomAlphabetic(10) + "@test.com";
+        this.registerUser(randomUser, "password");
+        assertTrue(driver.getPageSource().indexOf("You have successfully registered with The BodgeIt Store.") > 0);
+    }
+    
+    public void tstRegisterAndLoginUser() {
+        // Create random username so we can rerun test
+        String randomUser = RandomStringUtils.randomAlphabetic(10) + "@test.com";
+        this.registerUser(randomUser, "password");
+        assertTrue(driver.getPageSource().indexOf("You have successfully registered with The BodgeIt Store.") > 0);
+        checkMenu("Logout", "logout.jsp");
+        
+        this.loginUser(randomUser, "password");
+        assertTrue(driver.getPageSource().indexOf("You have logged in successfully:") > 0);
+    }
+    
+    public void tstAddProductsToBasket() {
+        driver.get(site + "product.jsp?typeid=1");
+        sleep();
+        driver.findElement(By.linkText("Basic Widget")).click();
+        sleep();
+        driver.findElement(By.id("submit")).click();
+        sleep();
+        
+        driver.get(site + "product.jsp?typeid=2");
+        sleep();
+        driver.findElement(By.linkText("Thingie 2")).click();
+        sleep();
+        driver.findElement(By.id("submit")).click();
+        sleep();
+        
+        driver.get(site + "product.jsp?typeid=3");
+        sleep();
+        driver.findElement(By.linkText("TGJ CCC")).click();
+        sleep();
+        driver.findElement(By.id("submit")).click();
+        sleep();
+    }
 
-	public void tearDown() throws Exception {
-		driver.close();
-	}
+    public void tstSearch() {
+        driver.get(site + "search.jsp?q=doo");
+        sleep();
+        
+        // TODO check the results!
+        //driver.findElement(By.name("q")).sendKeys("doo");
+        
+    }
 
-	protected WebDriver getDriver() {
-		return driver;
-	}
+    public void testAll() {
+        tstMenuLinks();
+        tstRegisterUser();
+        tstRegisterAndLoginUser();
+        tstAddProductsToBasket();
+        tstSearch();
+        
+    }
 
-	protected void setDriver(WebDriver driver) {
-		this.driver = driver;
-	}
+    public void tearDown() throws Exception {
+        driver.close();
+        driver.quit();
+    }
 
-	protected String getSite() {
-		return site;
-	}
+    protected WebDriver getDriver() {
+        return driver;
+    }
 
-	protected void setSite(String site) {
-		this.site = site;
-	}
-	
-	public static void main(String[] args) throws Exception {
-		FunctionalTest test = new FunctionalTest();
-		test.setUp();
-		test.testAll();
-		test.tearDown();
-		
-	}
+    protected void setDriver(WebDriver driver) {
+        this.driver = driver;
+    }
+
+    protected String getSite() {
+        return site;
+    }
+
+    protected void setSite(String site) {
+        this.site = site;
+    }
+    
+    public static void main(String[] args) throws Exception {
+        FunctionalTest test = new FunctionalTest();
+        test.setUp();
+        test.testAll();
+        test.tearDown();
+        
+    }
 
 }

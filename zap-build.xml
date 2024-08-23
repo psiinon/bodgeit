@@ -18,16 +18,29 @@
 	<echo message="The Java home directory is: ${java.home}"/>
 	-->
 
-	<taskdef name="accessUrlTask" classname="org.zaproxy.clientapi.ant.AccessUrlTask"/>
-	<taskdef name="activeScanUrlTask" classname="org.zaproxy.clientapi.ant.ActiveScanUrlTask"/>
-	<taskdef name="activeScanSubtreeTask" classname="org.zaproxy.clientapi.ant.ActiveScanSubtreeTask"/>
-	<taskdef name="alertCheckTask" classname="org.zaproxy.clientapi.ant.AlertCheckTask"/>
-	<taskdef name="loadSessionTask" classname="org.zaproxy.clientapi.ant.LoadSessionTask"/>
-	<taskdef name="newSessionTask" classname="org.zaproxy.clientapi.ant.NewSessionTask"/>
-	<taskdef name="saveSessionTask" classname="org.zaproxy.clientapi.ant.SaveSessionTask"/>
-	<taskdef name="spiderUrlTask" classname="org.zaproxy.clientapi.ant.SpiderUrlTask"/>
-	<taskdef name="stopZapTask" classname="org.zaproxy.clientapi.ant.StopZapTask"/>
-	<taskdef name="alert" classname="org.zaproxy.clientapi.ant.AlertTask"/>
+    <path id="zap.api">
+        <fileset dir="lib">
+            <include name="zap-clientapi-ant-*.jar" />
+            <include name="zap-api-*.jar" />
+        </fileset>
+    </path>
+
+	<taskdef name="accessUrlTask" classname="org.zaproxy.clientapi.ant.AccessUrlTask" classpathref="zap.api"/>
+	<taskdef name="activeScanUrlTask" classname="org.zaproxy.clientapi.ant.ActiveScanUrlTask" classpathref="zap.api"/>
+	<taskdef name="activeScanSubtreeTask" classname="org.zaproxy.clientapi.ant.ActiveScanSubtreeTask" classpathref="zap.api"/>
+	<taskdef name="alertCheckTask" classname="org.zaproxy.clientapi.ant.AlertCheckTask" classpathref="zap.api"/>
+	<taskdef name="loadSessionTask" classname="org.zaproxy.clientapi.ant.LoadSessionTask" classpathref="zap.api"/>
+	<taskdef name="newSessionTask" classname="org.zaproxy.clientapi.ant.NewSessionTask" classpathref="zap.api"/>
+	<taskdef name="saveSessionTask" classname="org.zaproxy.clientapi.ant.SaveSessionTask" classpathref="zap.api"/>
+	<taskdef name="spiderUrlTask" classname="org.zaproxy.clientapi.ant.SpiderUrlTask" classpathref="zap.api"/>
+	<taskdef name="stopZapTask" classname="org.zaproxy.clientapi.ant.StopZapTask" classpathref="zap.api"/>
+    <taskdef name="alert" classname="org.zaproxy.clientapi.ant.AlertTask" classpathref="zap.api"/>
+
+    <path id="zap.server">
+        <fileset dir="${zap.dir}">
+            <include name="zap*.jar" />
+        </fileset>
+    </path>
 
 	<!--
 	Calling tasks can override properties, eg using
@@ -38,21 +51,23 @@
 	-->
 
 	<target name="startZap">
-		<java classname="org.zaproxy.zap.ZAP" fork="true" spawn="true" dir="${zap.dir}">
-			<classpath>
-				<pathelement location="${zap.dir}/zap.jar"/>
-			</classpath>
-		</java>
+        <java classname="org.zaproxy.zap.ZAP" fork="true" spawn="true" dir="${zap.dir}" classpathref="zap.server">
+            <arg value="-host"/>
+            <arg value="${zap.addr}"/>
+            <arg value="-port"/>
+            <arg value="${zap.port}"/>
+        </java>
 		<!-- Give ZAP a chance to start -->
 		<sleep seconds="30"/>
 	</target>
 
 	<target name="startZapDaemon">
-		<java classname="org.zaproxy.zap.ZAP" fork="true" spawn="true" dir="${zap.dir}">
+		<java classname="org.zaproxy.zap.ZAP" fork="true" spawn="true" dir="${zap.dir}" classpathref="zap.server">
 			<arg value="-daemon"/>
-			<classpath>
-				<pathelement location="${zap.dir}/zap.jar"/>
-			</classpath>
+            <arg value="-host"/>
+            <arg value="${zap.addr}"/>
+            <arg value="-port"/>
+            <arg value="${zap.port}"/>
 		</java>
 		<!-- Give ZAP a chance to start -->
 		<sleep seconds="10"/>
